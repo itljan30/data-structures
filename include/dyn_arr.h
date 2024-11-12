@@ -2,6 +2,7 @@
 #define DYN_ARR_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct {
     void *elements;
@@ -10,10 +11,15 @@ typedef struct {
     size_t elementSize;
 } DynArr;
 
-DynArr newDynArr(size_t elementSize);
+DynArr newDynArr(const size_t elementSize);
 void freeDynArr(DynArr *arr);
 void popDA(DynArr *arr);
-void appendDA(DynArr *arr, void *element);
-void *atDA(DynArr *arr, size_t index);
+void appendDA(DynArr *arr, const void *element);
+void *atDA(const DynArr *arr, const size_t index);
+void insertDA(DynArr *arr, const size_t index, const void *element);
+void removeDA(DynArr *arr, const size_t index);
+bool containsDA(const DynArr *arr, const void *element);
+int lenDA(const DynArr *arr);
+void sortDA(DynArr *arr);
 
 #endif

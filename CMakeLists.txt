@@ -3,6 +3,7 @@ project(DataStructures)
 
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type (default: Debug)")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

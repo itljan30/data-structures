@@ -12,5 +12,7 @@ int main(void) {
         printf("%i\n", *valueAt);
     }
 
+    int *lastValue = atDA(&arr, 1000);
+
     freeDynArr(&arr);
 }
