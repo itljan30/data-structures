@@ -1,6 +1,7 @@
 #include "linked_list.h"
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "node.h"
 
@@ -13,17 +14,16 @@ void freeLinkedList(LinkedList *list) {
     if (list->firstNode == NULL) {
         return;
     }
-    if (list->firstNode->nextNode == NULL) {
-        freeNode(list->firstNode);
-    }
-    else {
-        Node *currentNode = list->firstNode;
-        Node *nextNode = NULL;
-        for (int i = 0; i < list->length; i++) {
-            nextNode = currentNode->nextNode;
+    Node *currentNode = list->firstNode;
+    Node *nextNode = NULL;
+    while (true) {
+        if (currentNode->nextNode == NULL) {
             freeNode(currentNode);
-            currentNode = nextNode;
+            break;
         }
+        nextNode = currentNode->nextNode;
+        freeNode(currentNode);
+        currentNode = nextNode;
     }
     list->firstNode = NULL;
     list->length = 0;

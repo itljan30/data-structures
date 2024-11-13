@@ -31,7 +31,7 @@ void freeDynArr(DynArr *arr);
 void popDA(DynArr *arr);
 
 /**
- * Places the given element at the end of the dynamic array.
+ * Adds the given element to the end of the dynamic array.
  */
 void appendDA(DynArr *arr, const void *element);
 
