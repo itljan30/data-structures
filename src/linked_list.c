@@ -10,12 +10,20 @@ LinkedList newLinkedList(const size_t elementSize) {
 }
 
 void freeLinkedList(LinkedList *list) {
-    Node *currentNode = list->firstNode;
-    Node *nextNode = NULL;
-    for (int i = 0; i < list->length; i++) {
-        nextNode = currentNode->nextNode;
-        freeNode(currentNode);
-        currentNode = nextNode;
+    if (list->firstNode == NULL) {
+        return;
+    }
+    if (list->firstNode->nextNode == NULL) {
+        freeNode(list->firstNode);
+    }
+    else {
+        Node *currentNode = list->firstNode;
+        Node *nextNode = NULL;
+        for (int i = 0; i < list->length; i++) {
+            nextNode = currentNode->nextNode;
+            freeNode(currentNode);
+            currentNode = nextNode;
+        }
     }
     list->firstNode = NULL;
     list->length = 0;

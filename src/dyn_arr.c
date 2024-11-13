@@ -6,7 +6,12 @@
 #include <stdbool.h>
 
 static void resize(DynArr *arr) {
-    arr->capacity *= 2;
+    if (arr->capacity == 0) {
+        arr->capacity = 1;
+    }
+    else {
+        arr->capacity *= 2;
+    }
 
     void *newArray = malloc(arr->elementSize * arr->capacity);
     if (newArray == NULL) {
@@ -24,13 +29,14 @@ static void resize(DynArr *arr) {
 }
 
 DynArr newDynArr(const size_t elementSize) {
-    void *elements = malloc(5 * elementSize);
-    DynArr arr = {elements, 5, 0, elementSize};
+    DynArr arr = {NULL, 0, 0, elementSize};
     return arr;
 }
 
 void freeDynArr(DynArr *arr) {
     free(arr->elements);
+    arr->length = 0;
+    arr->capacity = 0;
 }
 
 void popDA(DynArr *arr) {
@@ -73,16 +79,16 @@ void removeDA(DynArr *arr, const size_t index) {
     // TODO
 }
 
-bool containsDA(const DynArr *arr, const void *element) {
+size_t containsDA(const DynArr *arr, const void *element) {
     for (int i = 0; i < arr->length; i++) {
         const void *currentElement = (char*)arr->elements + (i * arr->elementSize);
         if (memcmp(currentElement, element, arr->elementSize) == 0) {
-            return true;
+            return i;
         }
     }
-    return false;
+    return -1;
 }
 
-int lenDA(const DynArr *arr) {
+size_t lenDA(const DynArr *arr) {
     return arr->length;
 }

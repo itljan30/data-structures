@@ -16,6 +16,11 @@ Node *newNode(size_t dataSize, void *data, Node *nextNode) {
         printf("Error: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
+
+    if (data == NULL) {
+        printf("Error: NULL data provided to LinkedList\n");
+        exit(EXIT_FAILURE);
+    }
     memcpy(node->data, data, dataSize);
 
     if (nextNode == NULL) {
