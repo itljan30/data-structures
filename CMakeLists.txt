@@ -3,6 +3,8 @@ project(DataStructures)
 
 add_library(DataStructures SHARED
     src/dyn_arr.c
+    src/linked_list.c
+    src/node.c
 )
 target_include_directories(DataStructures PUBLIC ${CMAKE_SOURCE_DIR}/include)
 

@@ -20,6 +20,5 @@ void insertDA(DynArr *arr, const size_t index, const void *element);
 void removeDA(DynArr *arr, const size_t index);
 bool containsDA(const DynArr *arr, const void *element);
 int lenDA(const DynArr *arr);
-void sortDA(DynArr *arr);
 
 #endif

@@ -10,7 +10,7 @@ static void resize(DynArr *arr) {
 
     void *newArray = malloc(arr->elementSize * arr->capacity);
     if (newArray == NULL) {
-        printf("Memory allocation failed\n");
+        printf("Error: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -24,9 +24,9 @@ static void resize(DynArr *arr) {
 }
 
 DynArr newDynArr(const size_t elementSize) {
-    void *elements = malloc(5 * sizeof(elementSize));
-    DynArr list = {elements, 5, 0, elementSize};
-    return list;
+    void *elements = malloc(5 * elementSize);
+    DynArr arr = {elements, 5, 0, elementSize};
+    return arr;
 }
 
 void freeDynArr(DynArr *arr) {
@@ -35,23 +35,23 @@ void freeDynArr(DynArr *arr) {
 
 void popDA(DynArr *arr) {
     if (arr->length == 0) {
-        printf("Attempted to pop an empty dynamic array\n");
+        printf("Error: Attempted to pop an empty dynamic array\n");
         exit(EXIT_FAILURE);
     }
     arr->length--;
 }
 
 void appendDA(DynArr *arr, const void *element) {
-    if (arr->length >= arr->capacity - 1) {
+    if (arr->length >= arr->capacity) {
         resize(arr);
     }
-    memcpy((char*)arr->elements + (arr->length * arr->elementSize), (char*)element, arr->elementSize);
+    memcpy(arr->elements + (arr->length * arr->elementSize), element, arr->elementSize);
     arr->length++;
 }
 
 void *atDA(const DynArr *arr, const size_t index) {
     if (index < 0 || index >= arr->length) {
-        printf("Index out of range\n");
+        printf("Error: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     return (char*)arr->elements + (index * arr->elementSize);
@@ -59,7 +59,7 @@ void *atDA(const DynArr *arr, const size_t index) {
 
 void insertDA(DynArr *arr, const size_t index, const void *element) {
     if (index < 0 || index >= arr->length) {
-        printf("Index out of range\n");
+        printf("Error: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     // TODO
@@ -67,7 +67,7 @@ void insertDA(DynArr *arr, const size_t index, const void *element) {
 
 void removeDA(DynArr *arr, const size_t index) {
     if (index < 0 || index >= arr->length) {
-        printf("Index out of range\n");
+        printf("Error: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     // TODO
@@ -75,7 +75,7 @@ void removeDA(DynArr *arr, const size_t index) {
 
 bool containsDA(const DynArr *arr, const void *element) {
     for (int i = 0; i < arr->length; i++) {
-        void *currentElement = (char*)arr->elements + (i * arr->elementSize);
+        const void *currentElement = (char*)arr->elements + (i * arr->elementSize);
         if (memcmp(currentElement, element, arr->elementSize) == 0) {
             return true;
         }
@@ -85,8 +85,4 @@ bool containsDA(const DynArr *arr, const void *element) {
 
 int lenDA(const DynArr *arr) {
     return arr->length;
-}
-
-void sortDA(DynArr *arr) {
-    // TODO
 }
