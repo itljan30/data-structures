@@ -15,7 +15,9 @@ add_executable(LinkedListTest
 
 foreach(test_executable ${TEST_EXECUTABLES})
     target_include_directories(${test_executable} PRIVATE ${CMAKE_SOURCE_DIR}/include)
-endforeach()
+    
+    add_test(NAME ${test_executable} COMMAND
+        valgrind --leak-check=full --track-origins=yes $<TARGET_FILE:${test_executable}>
+    )
 
-add_test(NAME DynamicArrayTest COMMAND DynArrTest)
-add_test(NAME LinkedListTest COMMAND LinkedListTest)
+endforeach()

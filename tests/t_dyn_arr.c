@@ -54,6 +54,7 @@ void contains() {
 
     size_t newValue = 4;
     assert(containsDA(&arr, &newValue) == 1);
+    freeDynArr(&arr);
 }
 
 void insert() {
