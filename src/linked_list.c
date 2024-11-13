@@ -26,10 +26,17 @@ void appendLL(LinkedList *list, void *element) {
         list->firstNode = newNode(list->elementSize, element, NULL);
     }
     else {
+        Node *node = newNode(list->elementSize, element, NULL);
+
         Node *currentNode = list->firstNode;
-        
+        Node *nextNode = NULL;
         for (int i = 0; i < list->length; i++) {
-            // TODO walk through list until find one with nextNode = NULL;
+            nextNode = currentNode->nextNode;
+            if (nextNode == NULL) {
+                currentNode->nextNode = node;
+                break;
+            }
+            currentNode = nextNode;
         }
     }
     list->length++;

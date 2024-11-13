@@ -7,8 +7,8 @@
 
 typedef struct {
     Node *firstNode;
-    size_t elementSize;
     size_t length;
+    const size_t elementSize;
 } LinkedList;
 
 LinkedList newLinkedList(const size_t elementSize);

@@ -1,7 +1,11 @@
 #include "linked_list.h"
 
 void firstAppend() {
-    // TODO
+    LinkedList list = newLinkedList(sizeof(long));
+    long value = 100;
+    appendLL(&list, &value);
+
+    freeLinkedList(&list);
 }
 
 void firstPrepend() {
