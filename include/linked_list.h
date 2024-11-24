@@ -14,25 +14,37 @@ typedef struct {
 /**
  * Returns an empty linked list.
  * Example usage: 
- * `LinkedList list = newLinkedList(sizeof(int));` .
- * WARNING: Be sure to call freeLinkedList() to avoid memory leaks.
+ * `LinkedList list = LinkedList_new(sizeof(int));` .
+ * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
  */
-LinkedList newLinkedList(const size_t elementSize);
+LinkedList LinkedList_new(const size_t elementSize);
 
 /**
  * Frees the memory allocated to a LinkedList and
  * sets the length to 0.
  */
-void freeLinkedList(LinkedList *list);
+void LinkedList_free(LinkedList *list);
 
 /**
  * Adds the given element to the end of the given LinkedList.
  */
-void appendLL(LinkedList *list, void *element);
+void LinkedList_append(LinkedList *list, void *element);
 
 /**
  * Adds the given element to the beginning of the given LinkedList.
  */
-void prependLL(LinkedList *list, void *element);
+void LinkedList_prepend(LinkedList *list, void *element);
+
+/**
+ * Adds the given element at the given index.
+ * Shifts elements to the right as needed.
+ */
+void LinkedList_insert(LinkedList *list, void *element, const size_t index);
+
+/**
+ * Removes the element at the given index.
+ * Shifts elements to the left as needed.
+ */
+void LinkedList_remove(LinkedList *list, const size_t element);
 
 #endif

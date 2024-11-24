@@ -1,37 +1,37 @@
 #include "linked_list.h"
 
 void firstAppend() {
-    LinkedList list = newLinkedList(sizeof(long));
+    LinkedList list = LinkedList_new(sizeof(long));
     long value = 100;
-    appendLL(&list, &value);
+    LinkedList_append(&list, &value);
 
-    freeLinkedList(&list);
+    LinkedList_free(&list);
 }
 
 void firstPrepend() {
-    LinkedList list = newLinkedList(sizeof(char));
+    LinkedList list = LinkedList_new(sizeof(char));
     char value = 'x';
-    prependLL(&list, &value);
+    LinkedList_prepend(&list, &value);
 
-    freeLinkedList(&list);
+    LinkedList_free(&list);
 }
 
 void append() {
-    LinkedList list = newLinkedList(sizeof(double));
+    LinkedList list = LinkedList_new(sizeof(double));
     for (double i = 0; i < 1000; i++) {
-        appendLL(&list, &i);
+        LinkedList_append(&list, &i);
     }
 
-    freeLinkedList(&list);
+    LinkedList_free(&list);
 }
 
 void prepend() {
-    LinkedList list = newLinkedList(sizeof(float));
+    LinkedList list = LinkedList_new(sizeof(float));
     for (float i = 0; i < 1000; i++) {
-        prependLL(&list, &i);
+        LinkedList_prepend(&list, &i);
     }
 
-    freeLinkedList(&list);
+    LinkedList_free(&list);
 }
 
 int main(void) {

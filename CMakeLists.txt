@@ -8,7 +8,6 @@ add_library(DataStructures SHARED
 )
 target_include_directories(DataStructures PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type (default: Debug)")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     enable_testing()
     add_subdirectory(tests)

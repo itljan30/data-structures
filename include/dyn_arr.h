@@ -13,51 +13,50 @@ typedef struct {
 
 /**
  * Returns an empty dynamically sized array.
- * Example usage: 
- * `DynArr arr = newDynArr(sizeof(int));` .
- * WARNING: Be sure to call freeDynArr() to avoid memory leaks.
+ * Example usage: `DynArr arr = DynArr_new(sizeof(int));` .
+ * WARNING: Be sure to call DynArr_free() to avoid memory leaks.
  */
-DynArr newDynArr(const size_t elementSize);
+DynArr DynArr_new(const size_t elementSize);
 
 /**
  * Frees the memory allocated to the array 
  * and sets the arrays length and capacity to 0.
  */
-void freeDynArr(DynArr *arr);
+void DynArr_free(DynArr *arr);
 
 /**
  * Removes the final item from the dynamic array.
  */
-void popDA(DynArr *arr);
+void DynArr_pop(DynArr *arr);
 
 /**
  * Adds the given element to the end of the dynamic array.
  */
-void appendDA(DynArr *arr, const void *element);
+void DynArr_append(DynArr *arr, const void *element);
 
 /**
  * Returns a pointer to the element at the given index.
  */
-void *atDA(const DynArr *arr, const size_t index);
+void *DynArr_at(const DynArr *arr, const size_t index);
 
 /**
  * TODO Add implemenetation.
  */
-void insertDA(DynArr *arr, const size_t index, const void *element);
+void DynArr_insert(DynArr *arr, const size_t index, const void *element);
 
 /**
  * TODO Add implemenetation.
  */
-void removeDA(DynArr *arr, const size_t index);
+void DynArr_remove(DynArr *arr, const size_t index);
 
 /**
- * Returns the index of the given value if it exists, else it returns -1.
+ * Returns true if the given dynamic array has the given element, else returns false.
  */
-size_t containsDA(const DynArr *arr, const void *element);
+bool DynArr_contains(const DynArr *arr, const void *element);
 
 /**
  * Returns the length of the dynamic array.
  */
-size_t lenDA(const DynArr *arr);
+size_t DynArr_len(const DynArr *arr);
 
 #endif
