@@ -45,6 +45,19 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index);
  * Removes the element at the given index.
  * Shifts elements to the left as needed.
  */
-void LinkedList_remove(LinkedList *list, const size_t element);
+void LinkedList_remove(LinkedList *list, const size_t index);
+
+/**
+ * Returns the current length of the given LinkedList.
+ */
+size_t LinkedList_len(LinkedList *list);
+
+/**
+ * Returns the element at the given index;
+ */
+void *LinkedList_at(LinkedList *list, size_t index);
+
+// TODO LinkedList_contains
+// TODO LinkedList_find
 
 #endif

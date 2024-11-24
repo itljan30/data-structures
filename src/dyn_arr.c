@@ -55,7 +55,7 @@ void DynArr_append(DynArr *arr, const void *element) {
 }
 
 void *DynArr_at(const DynArr *arr, const size_t index) {
-    if (index < 0 || index >= arr->length) {
+    if (index >= arr->length) {
         printf("Error: Index out of range\n");
         exit(EXIT_FAILURE);
     }

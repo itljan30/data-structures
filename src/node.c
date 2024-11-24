@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-Node *newNode(size_t dataSize, void *data, Node *nextNode) {
+Node *Node_new(size_t dataSize, void *data, Node *nextNode) {
     Node *node = malloc(sizeof(Node));
     if (node == NULL) {
         printf("Error: Failed to allocate memory\n");
@@ -18,7 +18,7 @@ Node *newNode(size_t dataSize, void *data, Node *nextNode) {
     }
 
     if (data == NULL) {
-        printf("Error: NULL data provided to LinkedList\n");
+        printf("Error: NULL data provided to Node\n");
         exit(EXIT_FAILURE);
     }
     memcpy(node->data, data, dataSize);
@@ -32,7 +32,7 @@ Node *newNode(size_t dataSize, void *data, Node *nextNode) {
     return node;
 }
 
-void freeNode(Node *node) {
+void Node_free(Node *node) {
     free(node->data);
     free(node);
 }

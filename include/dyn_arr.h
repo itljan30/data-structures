@@ -40,12 +40,14 @@ void DynArr_append(DynArr *arr, const void *element);
 void *DynArr_at(const DynArr *arr, const size_t index);
 
 /**
- * TODO Add implemenetation.
+ * Inserts the given element at the given index.
+ * Moves elements to the right as needed.
  */
 void DynArr_insert(DynArr *arr, const size_t index, const void *element);
 
 /**
- * TODO Add implemenetation.
+ * Removes the element at the given index.
+ * Moves elements to the left as needed.
  */
 void DynArr_remove(DynArr *arr, const size_t index);
 
@@ -53,6 +55,8 @@ void DynArr_remove(DynArr *arr, const size_t index);
  * Returns true if the given dynamic array has the given element, else returns false.
  */
 bool DynArr_contains(const DynArr *arr, const void *element);
+
+// TODO DynArr_find
 
 /**
  * Returns the length of the dynamic array.
