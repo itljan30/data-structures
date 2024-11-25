@@ -56,11 +56,11 @@ void DynArr_remove(DynArr *arr, const size_t index);
  */
 bool DynArr_contains(const DynArr *arr, const void *element);
 
-// TODO DynArr_find
-
 /**
  * Returns the length of the dynamic array.
  */
 size_t DynArr_len(const DynArr *arr);
+
+// TODO DynArr_find
 
 #endif

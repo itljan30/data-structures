@@ -2,6 +2,7 @@
 #define LINKED_LIST_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "node.h"
 
@@ -57,7 +58,8 @@ size_t LinkedList_len(LinkedList *list);
  */
 void *LinkedList_at(LinkedList *list, size_t index);
 
-// TODO LinkedList_contains
+bool LinkedList_contains(LinkedList *list, void *element);
+
 // TODO LinkedList_find
 
 #endif

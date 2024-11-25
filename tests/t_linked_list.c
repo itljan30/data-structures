@@ -1,6 +1,7 @@
 #include "linked_list.h"
 
 #include <assert.h>
+#include <stdbool.h>
 
 void firstAppend() {
     LinkedList list = LinkedList_new(sizeof(long));
@@ -84,6 +85,22 @@ void remove() {
     LinkedList_free(&list);
 }
 
+void contains() {
+    LinkedList list = LinkedList_new(sizeof(int));
+    for (int i = 0; i < 100; i++) {
+        LinkedList_append(&list, &i);
+    }
+
+    int value = 10;
+    int secondValue = 99;
+    int thirdValue = 100;
+    assert(LinkedList_contains(&list, &value) == true);
+    assert(LinkedList_contains(&list, &secondValue) == true);
+    assert(LinkedList_contains(&list, &thirdValue) == false);
+
+    LinkedList_free(&list);
+}
+
 int main(void) {
     firstAppend();
     firstPrepend();
@@ -91,4 +108,5 @@ int main(void) {
     prepend();
     insert();
     remove();
+    contains();
 }

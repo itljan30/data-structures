@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 LinkedList LinkedList_new(const size_t elementSize) {
     LinkedList list = {NULL, 0, elementSize};
@@ -133,4 +134,18 @@ void *LinkedList_at(LinkedList *list, size_t index) {
     }
 
     return currentNode->data;
+}
+
+bool LinkedList_contains(LinkedList *list, void *element) {
+    Node *currentNode = list->firstNode;
+    if (memcmp(currentNode->data, element, list->elementSize) == 0) {
+        return true;
+    }
+    while (currentNode->nextNode != NULL) {
+        currentNode = currentNode->nextNode;
+        if (memcmp(currentNode->data, element, list->elementSize) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
