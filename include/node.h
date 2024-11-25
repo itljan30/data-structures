@@ -25,6 +25,17 @@ typedef struct TreeNode {
     struct TreeNode *right;
 } TreeNode;
 
+/**
+ * Returns a node with the given data and left/right node.
+ * NOTE: If you don't have a left/right node, put NULL.
+ */
+TreeNode *TreeNode_new(size_t dataSize, void *data, TreeNode *rightNode, TreeNode *leftNode);
+
+/*
+ * Frees all memory allocated to the given node.
+ */
+void TreeNode_free(TreeNode *node);
+
 typedef struct BiNode {
     void *data;
     struct Node *nextNode;
