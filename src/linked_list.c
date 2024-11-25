@@ -6,8 +6,11 @@
 #include <stdio.h>
 #include <string.h>
 
-LinkedList LinkedList_new(const size_t elementSize) {
-    LinkedList list = {NULL, 0, elementSize};
+LinkedList *LinkedList_new(const size_t elementSize) {
+    LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
+    list->elementSize = elementSize;
+    list->firstNode = NULL;
+    list->length = 0;
     return list;
 }
 
@@ -26,8 +29,7 @@ void LinkedList_free(LinkedList *list) {
         Node_free(currentNode);
         currentNode = nextNode;
     }
-    list->firstNode = NULL;
-    list->length = 0;
+    free(list);
 }
 
 void LinkedList_append(LinkedList *list, void *element) {

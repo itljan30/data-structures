@@ -5,7 +5,7 @@
 #include <memory.h>
 
 Node *Node_new(size_t dataSize, void *data, Node *nextNode) {
-    Node *node = malloc(sizeof(Node));
+    Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL) {
         printf("Error: Failed to allocate memory\n");
         exit(EXIT_FAILURE);

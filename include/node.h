@@ -19,6 +19,12 @@ Node *Node_new(size_t dataSize, void *data, Node *nextNode);
  */
 void Node_free(Node *node);
 
+typedef struct TreeNode {
+    void *data;
+    struct TreeNode *left;
+    struct TreeNode *right;
+} TreeNode;
+
 typedef struct BiNode {
     void *data;
     struct Node *nextNode;

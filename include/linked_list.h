@@ -9,20 +9,19 @@
 typedef struct {
     Node *firstNode;
     size_t length;
-    const size_t elementSize;
+    size_t elementSize;
 } LinkedList;
 
 /**
  * Returns an empty linked list.
  * Example usage: 
- * `LinkedList list = LinkedList_new(sizeof(int));` .
+ * `LinkedList *list = LinkedList_new(sizeof(int));` .
  * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
  */
-LinkedList LinkedList_new(const size_t elementSize);
+LinkedList *LinkedList_new(const size_t elementSize);
 
 /**
- * Frees the memory allocated to a LinkedList and
- * sets the length to 0.
+ * Frees the memory allocated to the LinkedList.
  */
 void LinkedList_free(LinkedList *list);
 

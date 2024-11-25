@@ -27,15 +27,18 @@ static void resize(DynArr *arr) {
     arr->elements = newArray;
 }
 
-DynArr DynArr_new(const size_t elementSize) {
-    DynArr arr = {NULL, 0, 0, elementSize};
+DynArr *DynArr_new(const size_t elementSize) {
+    DynArr *arr = (DynArr *)malloc(sizeof(DynArr));
+    arr->elementSize = elementSize;
+    arr->length = 0;
+    arr->elements = NULL;
+    arr->capacity = 0;
     return arr;
 }
 
 void DynArr_free(DynArr *arr) {
     free(arr->elements);
-    arr->length = 0;
-    arr->capacity = 0;
+    free(arr);
 }
 
 void DynArr_pop(DynArr *arr) {
