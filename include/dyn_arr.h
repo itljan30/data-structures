@@ -62,4 +62,10 @@ size_t DynArr_len(const DynArr *arr);
 
 // TODO DynArr_find
 
+/**
+ * Returns a newly allocated portion of memory that is double the current capacity.
+ */
+void *DynArr_resizeNoCopy(DynArr *arr);
+
+
 #endif

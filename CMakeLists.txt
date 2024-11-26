@@ -4,6 +4,7 @@ project(DataStructures)
 add_library(DataStructures SHARED
     src/binary_tree.c
     src/dyn_arr.c
+    src/hash_map.c
     src/linked_list.c
     src/node.c
 )

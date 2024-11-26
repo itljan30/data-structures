@@ -2,8 +2,7 @@
 #define BINARY_TREE_H
 
 #include "node.h"
-
-typedef int (*CompareFunc)(void *a, void *b);
+#include "compare_func.h"
 
 typedef struct {
     TreeNode *root;
@@ -46,5 +45,10 @@ void *BinaryTree_search(BinaryTree *tree, void *element);
  * Returns 0 if successful, returns -1 if element was not found.
  */
 int BinaryTree_delete(BinaryTree *tree, void *element);
+
+/**
+ * Returns the number of elements in the given BinaryTree.
+ */
+size_t BinaryTree_size(BinaryTree *tree);
 
 #endif

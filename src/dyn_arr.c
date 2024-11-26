@@ -104,3 +104,20 @@ bool DynArr_contains(const DynArr *arr, const void *element) {
 size_t DynArr_len(const DynArr *arr) {
     return arr->length;
 }
+
+void *DynArr_resizeNoCopy(DynArr *arr) {
+    if (arr->capacity == 0) {
+        arr->capacity = 1;
+    }
+    else {
+        arr->capacity *= 2;
+    }
+
+    void *newArray = malloc(arr->elementSize * arr->capacity);
+    if (newArray == NULL) {
+        printf("Error: Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return newArray;
+}

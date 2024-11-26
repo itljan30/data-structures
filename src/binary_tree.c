@@ -1,18 +1,11 @@
 #include "binary_tree.h"
 #include "node.h"
+#include "compare_func.h"
 
-#include <string.h>
 #include <stdbool.h>
-#include <assert.h>
-#include <stdio.h>
 
 static int RIGHT = 0;
 static int LEFT = 1;
-
-static int defaultCompare(void *a, void *b, size_t elementSize) {
-    return memcmp(a, b, elementSize);
-}
-
 
 static void recursiveFree(TreeNode *node) {
     if (node == NULL) {
@@ -216,4 +209,8 @@ int BinaryTree_delete(BinaryTree *tree, void *element) {
 
     tree->size--;
     return 0;
+}
+
+size_t BinaryTree_size(BinaryTree *tree) {
+    return tree->size;
 }
