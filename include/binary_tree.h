@@ -41,6 +41,10 @@ void BinaryTree_free(BinaryTree *tree);
  */
 void *BinaryTree_search(BinaryTree *tree, void *element);
 
-// TODO void BinaryTree_delete(BinaryTree *tree, void *element);
+/**
+ * Removes the given element from the given tree.
+ * Returns 0 if successful, returns -1 if element was not found.
+ */
+int BinaryTree_delete(BinaryTree *tree, void *element);
 
 #endif

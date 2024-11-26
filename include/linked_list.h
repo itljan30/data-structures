@@ -15,7 +15,7 @@ typedef struct {
 /**
  * Returns an empty linked list.
  * Example usage: 
- * `LinkedList *list = LinkedList_new(sizeof(int));` .
+ * `LinkedList *list = LinkedList_new(sizeof(int));`.
  * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
  */
 LinkedList *LinkedList_new(const size_t elementSize);
@@ -57,6 +57,9 @@ size_t LinkedList_len(LinkedList *list);
  */
 void *LinkedList_at(LinkedList *list, size_t index);
 
+/**
+ * Returns true if the given element is in the given list, else it returns false.
+ */
 bool LinkedList_contains(LinkedList *list, void *element);
 
 // TODO LinkedList_find

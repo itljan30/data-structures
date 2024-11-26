@@ -3,10 +3,16 @@
 
 #include <string.h>
 #include <stdbool.h>
+#include <assert.h>
+#include <stdio.h>
+
+static int RIGHT = 0;
+static int LEFT = 1;
 
 static int defaultCompare(void *a, void *b, size_t elementSize) {
     return memcmp(a, b, elementSize);
 }
+
 
 static void recursiveFree(TreeNode *node) {
     if (node == NULL) {
@@ -15,6 +21,88 @@ static void recursiveFree(TreeNode *node) {
     recursiveFree(node->left);
     recursiveFree(node->right);
     TreeNode_free(node);
+}
+
+static void removeLeaf(BinaryTree *tree, TreeNode *replacedNode, TreeNode *replacedParent, int direction) {
+    if (replacedParent == NULL) {
+        TreeNode_free(tree->root);
+    }
+    else if (direction == RIGHT) {
+        replacedParent->right = NULL;
+    }
+    else {
+        replacedParent->left = NULL;
+    }
+    TreeNode_free(replacedNode);
+}
+
+// assumes replaced node has only a right child
+static void replaceWithRightChild(BinaryTree *tree, TreeNode *replacedNode, TreeNode *replacedParent, int direction) {
+    if (replacedParent == NULL) {
+        tree->root = replacedNode->right;
+    }
+    else if (direction == RIGHT) {
+        replacedParent->right = replacedNode->right;
+    }
+    else {
+        replacedParent->left = replacedNode->right;
+    }
+    TreeNode_free(replacedNode);
+}
+
+// assumes replaced node has only a left child
+static void replaceWithLeftChild(BinaryTree *tree, TreeNode *replacedNode, TreeNode *replacedParent, int direction) {
+    if (replacedParent == NULL) {
+        tree->root = replacedNode->left;
+    }
+    else if (direction == RIGHT) {
+        replacedParent->right = replacedNode->left;
+    }
+    else {
+        replacedParent->left = replacedNode->left;
+    }
+    TreeNode_free(replacedNode);
+}
+
+// assumes replaced node has 2 children
+static void replaceWithSuccessor(BinaryTree *tree, TreeNode *replacedNode, TreeNode *replacedParent, int direction) {
+    TreeNode *successorParent = NULL;
+    TreeNode *successorNode = replacedNode->right;
+    while (successorNode->left != NULL) {
+            successorParent = successorNode;
+            successorNode = successorNode->left;
+    }
+
+    if (successorParent != NULL) {
+        if (successorNode->right != NULL) {
+            successorParent->left = successorNode->right;
+        }
+        else {
+            successorParent->left = NULL;
+        }
+    }
+    
+    if (replacedParent == NULL) {
+        tree->root = successorNode;
+        successorNode->right = replacedNode->right;
+        successorNode->left = replacedNode->left;
+    }
+    else if (direction == RIGHT) {
+        replacedParent->right = successorNode;
+    }
+    else {
+        replacedParent->left = successorNode;
+    }
+
+    if (successorParent == NULL) {
+        successorNode->left = replacedNode->left;
+    }
+    else {
+        successorNode->right = replacedNode->right;
+        successorNode->left = replacedNode->left;
+    }
+    
+    TreeNode_free(replacedNode);
 }
 
 BinaryTree *BinaryTree_new(const size_t elementSize, CompareFunc compareFunc) {
@@ -73,11 +161,59 @@ void *BinaryTree_search(BinaryTree *tree, void *element) {
             currentNode = currentNode->left;
         }
         else if (comparison > 0) {
-            currentNode = currentNode->right;
+            currentNode = currentNode->right; 
         }
-        else if (comparison == 0) {
+        else {
             return currentNode->data;
         }
     }
     return NULL;
+}
+
+int BinaryTree_delete(BinaryTree *tree, void *element) {
+    if (tree->root == NULL) {
+        return -1;
+    }
+
+    int direction = -1;
+    TreeNode *prevNode = NULL;
+    TreeNode *currentNode = tree->root;
+    while (currentNode != NULL) {
+        int comparison = tree->compareFunc ? tree->compareFunc(element, currentNode->data)
+                                           : defaultCompare(element, currentNode->data, tree->elementSize);
+
+        if (comparison < 0) {
+            direction = LEFT;
+            prevNode = currentNode;
+            currentNode = currentNode->left;
+        }
+        else if (comparison > 0) {
+            direction = RIGHT;
+            prevNode = currentNode;
+            currentNode = currentNode->right; 
+        }
+        else {
+            break;
+        }
+    }
+
+    if (currentNode == NULL) {
+        return -1;
+    }
+
+    if (currentNode->left == NULL && currentNode->right == NULL) {
+        removeLeaf(tree, currentNode, prevNode, direction);
+    }
+    else if (currentNode->left == NULL && currentNode->right != NULL) {
+        replaceWithRightChild(tree, currentNode, prevNode, direction);
+    }
+    else if (currentNode->left != NULL && currentNode->right == NULL) {
+        replaceWithLeftChild(tree, currentNode, prevNode, direction);
+    }
+    else if (currentNode->left != NULL && currentNode->right != NULL) {
+        replaceWithSuccessor(tree, currentNode, prevNode, direction);
+    }
+
+    tree->size--;
+    return 0;
 }

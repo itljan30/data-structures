@@ -36,10 +36,11 @@ TreeNode *TreeNode_new(size_t dataSize, void *data, TreeNode *rightNode, TreeNod
  */
 void TreeNode_free(TreeNode *node);
 
-typedef struct BiNode {
+typedef struct BiTreeNode {
     void *data;
-    struct Node *nextNode;
-    struct Node *prevNode;
-} BiNode;
+    struct BiTreeNode *prevNode;
+    struct BiTreeNode *left;
+    struct BiTreeNode *right;
+} BiTreeNode;
 
 #endif
