@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 void firstAppend() {
-    LinkedList *list = LinkedList_new(sizeof(long));
+    LinkedList *list = LinkedList_new(sizeof(long), NULL);
     long value = 100;
     LinkedList_append(list, &value);
 
@@ -16,7 +16,7 @@ void firstAppend() {
 }
 
 void firstPrepend() {
-    LinkedList *list = LinkedList_new(sizeof(char));
+    LinkedList *list = LinkedList_new(sizeof(char), NULL);
     char value = 'x';
     LinkedList_prepend(list, &value);
 
@@ -28,7 +28,7 @@ void firstPrepend() {
 }
 
 void append() {
-    LinkedList *list = LinkedList_new(sizeof(double));
+    LinkedList *list = LinkedList_new(sizeof(double), NULL);
     for (double i = 0; i < 1000; i++) {
         LinkedList_append(list, &i);
     }
@@ -41,7 +41,7 @@ void append() {
 }
 
 void prepend() {
-    LinkedList *list = LinkedList_new(sizeof(float));
+    LinkedList *list = LinkedList_new(sizeof(float), NULL);
     for (float i = 0; i < 1000; i++) {
         LinkedList_prepend(list, &i);
     }
@@ -54,7 +54,7 @@ void prepend() {
 }
 
 void insert() {
-    LinkedList *list = LinkedList_new(sizeof(int));
+    LinkedList *list = LinkedList_new(sizeof(int), NULL);
     for (int i = 0; i < 100; i++) {
         LinkedList_append(list, &i);
     }
@@ -70,7 +70,7 @@ void insert() {
 }
 
 void remove() {
-    LinkedList *list = LinkedList_new(sizeof(int));
+    LinkedList *list = LinkedList_new(sizeof(int), NULL);
     for (int i = 0; i < 100; i++) {
         LinkedList_append(list, &i);
     }
@@ -86,7 +86,7 @@ void remove() {
 }
 
 void contains() {
-    LinkedList *list = LinkedList_new(sizeof(int));
+    LinkedList *list = LinkedList_new(sizeof(int), NULL);
     for (int i = 0; i < 100; i++) {
         LinkedList_append(list, &i);
     }

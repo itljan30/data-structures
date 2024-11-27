@@ -5,11 +5,13 @@
 #include <stdbool.h>
 
 #include "node.h"
+#include "callbacks.h"
 
 typedef struct {
     Node *firstNode;
     size_t length;
     size_t elementSize;
+    FreeFunc freeFunc;
 } LinkedList;
 
 /**
@@ -18,12 +20,15 @@ typedef struct {
  * `LinkedList *list = LinkedList_new(sizeof(int));`.
  * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
  */
-LinkedList *LinkedList_new(const size_t elementSize);
+LinkedList *LinkedList_new(const size_t elementSize, FreeFunc freeFunc);
 
 /**
  * Frees the memory allocated to the LinkedList.
+ * Uses `free()` if no custom free function was given during construction.
+ *
+ * @param list is assumed to be a LinkedList *.
  */
-void LinkedList_free(LinkedList *list);
+void LinkedList_free(void *list);
 
 /**
  * Adds the given element to the end of the given LinkedList.

@@ -2,13 +2,14 @@
 #define BINARY_TREE_H
 
 #include "node.h"
-#include "compare_func.h"
+#include "callbacks.h"
 
 typedef struct {
     TreeNode *root;
     CompareFunc compareFunc;
     size_t elementSize;
     size_t size;
+    FreeFunc freeFunc;
 } BinaryTree;
 
 /**
@@ -21,7 +22,7 @@ typedef struct {
  *                    It should return a negative int if `a < b`, 0 if `a == b`, and a positive int if `a > b`.
  *                    If `compareFunc == NULL`, it will compare values byte by byte.
  */
-BinaryTree *BinaryTree_new(size_t elementSize, CompareFunc compareFunc);
+BinaryTree *BinaryTree_new(size_t elementSize, CompareFunc compareFunc, FreeFunc freeFunc);
 
 /**
  * Inserts the given element into the given tree using the given compare function,
@@ -32,7 +33,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element);
 /**
  * Frees the allocated memory for the given tree.
  */
-void BinaryTree_free(BinaryTree *tree);
+void BinaryTree_free(void *tree);
 
 /**
  * Searches the tree for an element matching the given value.

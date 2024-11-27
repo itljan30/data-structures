@@ -6,16 +6,19 @@
 #include <stdio.h>
 #include <string.h>
 
-LinkedList *LinkedList_new(const size_t elementSize) {
+LinkedList *LinkedList_new(const size_t elementSize, FreeFunc freeFunc) {
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
     list->elementSize = elementSize;
     list->firstNode = NULL;
     list->length = 0;
+    list->freeFunc = freeFunc;
     return list;
 }
 
-void LinkedList_free(LinkedList *list) {
+void LinkedList_free(void *data) {
+    LinkedList *list = (LinkedList*)data;
     if (list->firstNode == NULL) {
+        free(list);
         return;
     }
     Node *currentNode = list->firstNode;
@@ -34,10 +37,10 @@ void LinkedList_free(LinkedList *list) {
 
 void LinkedList_append(LinkedList *list, void *element) {
     if (list->firstNode == NULL) {
-        list->firstNode = Node_new(list->elementSize, element, NULL);
+        list->firstNode = Node_new(list->elementSize, element, NULL, list->freeFunc);
     }
     else {
-        Node *node = Node_new(list->elementSize, element, NULL);
+        Node *node = Node_new(list->elementSize, element, NULL, list->freeFunc);
 
         Node *currentNode = list->firstNode;
         Node *nextNode = NULL;
@@ -55,21 +58,21 @@ void LinkedList_append(LinkedList *list, void *element) {
 
 void LinkedList_prepend(LinkedList *list, void *element) {
     if (list->firstNode == NULL) {
-        list->firstNode = Node_new(list->elementSize, element, NULL);
+        list->firstNode = Node_new(list->elementSize, element, NULL, list->freeFunc);
     }
     else {
-        list->firstNode = Node_new(list->elementSize, element, list->firstNode);
+        list->firstNode = Node_new(list->elementSize, element, list->firstNode, list->freeFunc);
     }
     list->length++;
 }
 
 void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
     if (index > list->length) {
-        printf("Error: Index out of range\n");
+        printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     if (index == 0) {
-        Node *newFirstNode = Node_new(list->elementSize, element, list->firstNode);
+        Node *newFirstNode = Node_new(list->elementSize, element, list->firstNode, list->freeFunc);
         list->firstNode = newFirstNode;
         return;
     }
@@ -79,7 +82,7 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
         nodeBeforeInsert = nodeBeforeInsert->nextNode;
     }
 
-    Node *newNode = Node_new(list->elementSize, element, NULL);
+    Node *newNode = Node_new(list->elementSize, element, NULL, list->freeFunc);
     if (nodeBeforeInsert->nextNode != NULL) {
         newNode->nextNode = nodeBeforeInsert->nextNode;
     }
@@ -89,7 +92,7 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
 
 void LinkedList_remove(LinkedList *list, const size_t index) {
     if (index >= list->length) {
-        printf("Error: Index out of range\n");
+        printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     if (index == 0) {
@@ -123,7 +126,7 @@ size_t LinkedList_len(LinkedList *list) {
 
 void *LinkedList_at(LinkedList *list, size_t index) {
     if (index >= list->length) {
-        printf("Error: Index out of range\n");
+        printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     if (index == 0) {

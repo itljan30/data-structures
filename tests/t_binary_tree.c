@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 void insert() {
-    BinaryTree *tree = BinaryTree_new(sizeof(int), NULL);
+    BinaryTree *tree = BinaryTree_new(sizeof(int), NULL, NULL);
 
     int value = 3;
     BinaryTree_insert(tree, &value);
@@ -19,7 +19,7 @@ void insert() {
 }
 
 void search() {
-    BinaryTree *tree = BinaryTree_new(sizeof(float), NULL);
+    BinaryTree *tree = BinaryTree_new(sizeof(float), NULL, NULL);
 
     float value = 420;
     BinaryTree_insert(tree, &value);
@@ -39,7 +39,7 @@ void search() {
 }
 
 void delete() {
-    BinaryTree *tree = BinaryTree_new(sizeof(int), NULL);
+    BinaryTree *tree = BinaryTree_new(sizeof(int), NULL, NULL);
 
     /*   
      *  resulting tree

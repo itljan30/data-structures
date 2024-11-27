@@ -15,7 +15,7 @@ static void resize(DynArr *arr) {
 
     void *newArray = malloc(arr->elementSize * arr->capacity);
     if (newArray == NULL) {
-        printf("Error: Memory allocation failed\n");
+        printf("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -27,23 +27,30 @@ static void resize(DynArr *arr) {
     arr->elements = newArray;
 }
 
-DynArr *DynArr_new(const size_t elementSize) {
+DynArr *DynArr_new(const size_t elementSize, FreeFunc freeFunc) {
     DynArr *arr = (DynArr *)malloc(sizeof(DynArr));
     arr->elementSize = elementSize;
     arr->length = 0;
     arr->elements = NULL;
     arr->capacity = 0;
+    arr->freeFunc = freeFunc;
     return arr;
 }
 
-void DynArr_free(DynArr *arr) {
+void DynArr_free(void *data) {
+    DynArr *arr = (DynArr*)data;
+    if (arr->freeFunc != NULL) {
+        for (int i = 0; i < arr->length; i++) {
+            arr->freeFunc(arr->elements + (i * arr->elementSize));
+        }
+    }
     free(arr->elements);
     free(arr);
 }
 
 void DynArr_pop(DynArr *arr) {
     if (arr->length == 0) {
-        printf("Error: Attempted to pop an empty dynamic array\n");
+        printf("ERROR: Attempted to pop an empty dynamic array\n");
         exit(EXIT_FAILURE);
     }
     arr->length--;
@@ -59,15 +66,15 @@ void DynArr_append(DynArr *arr, const void *element) {
 
 void *DynArr_at(const DynArr *arr, const size_t index) {
     if (index >= arr->length) {
-        printf("Error: Index out of range\n");
+        printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
-    return (char*)arr->elements + (index * arr->elementSize);
+    return arr->elements + (index * arr->elementSize);
 }
 
 void DynArr_insert(DynArr *arr, const size_t index, const void *element) {
     if (index > arr->length) {
-        printf("Error: Index out of range\n");
+        printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     if (arr->length >= arr->capacity) {
@@ -82,7 +89,7 @@ void DynArr_insert(DynArr *arr, const size_t index, const void *element) {
 
 void DynArr_remove(DynArr *arr, const size_t index) {
     if (index > arr->length) {
-        printf("Error: Index out of range\n");
+        printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     for (int i = index; i < arr->length - 1; i++) {
@@ -115,9 +122,13 @@ void *DynArr_resizeNoCopy(DynArr *arr) {
 
     void *newArray = malloc(arr->elementSize * arr->capacity);
     if (newArray == NULL) {
-        printf("Error: Memory allocation failed\n");
+        printf("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     return newArray;
+}
+
+size_t DynArr_capacity(DynArr *arr) {
+    return arr->capacity;
 }

@@ -1,6 +1,8 @@
 #ifndef DYN_ARR_H
 #define DYN_ARR_H
 
+#include "callbacks.h"
+
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -9,6 +11,7 @@ typedef struct {
     size_t capacity;
     size_t length;
     size_t elementSize;
+    FreeFunc freeFunc;
 } DynArr;
 
 /**
@@ -16,12 +19,15 @@ typedef struct {
  * Example usage: `DynArr *arr = DynArr_new(sizeof(int));` .
  * WARNING: Be sure to call DynArr_free() to avoid memory leaks.
  */
-DynArr *DynArr_new(const size_t elementSize);
+DynArr *DynArr_new(const size_t elementSize, FreeFunc freeFunc);
 
 /**
- * Frees the memory allocated to the array.
+ * Frees the memory allocated to the given array.
+ * Uses `free()` if no custom free function was given during construction.
+ *
+ * @param arr is assumed to be a DynArr *.
  */
-void DynArr_free(DynArr *arr);
+void DynArr_free(void *arr);
 
 /**
  * Removes the final item from the dynamic array.
@@ -67,5 +73,9 @@ size_t DynArr_len(const DynArr *arr);
  */
 void *DynArr_resizeNoCopy(DynArr *arr);
 
+/**
+ * Returns the capacity of the given DynArr.
+ */
+size_t DynArr_capacity(DynArr *arr);
 
 #endif

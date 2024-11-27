@@ -1,6 +1,6 @@
 #include "binary_tree.h"
 #include "node.h"
-#include "compare_func.h"
+#include "callbacks.h"
 
 #include <stdbool.h>
 
@@ -98,16 +98,18 @@ static void replaceWithSuccessor(BinaryTree *tree, TreeNode *replacedNode, TreeN
     TreeNode_free(replacedNode);
 }
 
-BinaryTree *BinaryTree_new(const size_t elementSize, CompareFunc compareFunc) {
+BinaryTree *BinaryTree_new(const size_t elementSize, CompareFunc compareFunc, FreeFunc freeFunc) {
     BinaryTree *tree = (BinaryTree *)malloc(sizeof(BinaryTree));
     tree->elementSize = elementSize;
     tree->compareFunc = compareFunc;
     tree->root = NULL;
     tree->size = 0;
+    tree->freeFunc = freeFunc;
     return tree;
 }
 
-void BinaryTree_free(BinaryTree *tree) {
+void BinaryTree_free(void *data) {
+    BinaryTree *tree = (BinaryTree*)data;
     recursiveFree(tree->root);
     free(tree);
 }
@@ -115,7 +117,7 @@ void BinaryTree_free(BinaryTree *tree) {
 void BinaryTree_insert(BinaryTree *tree, void *element) {
     tree->size++;
     if (tree->root == NULL) {
-        TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL);
+        TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL, tree->freeFunc);
         tree->root = node;
         return;
     }
@@ -127,7 +129,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element) {
 
         if (comparison < 0) {
             if (currentNode->left == NULL) {
-                TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL);
+                TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL, tree->freeFunc);
                 currentNode->left = node;
                 return;
             }
@@ -135,7 +137,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element) {
         }
         else {
             if (currentNode->right == NULL) {
-                TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL);
+                TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL, tree->freeFunc);
                 currentNode->right = node;
                 return;
             }

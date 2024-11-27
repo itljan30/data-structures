@@ -1,54 +1,65 @@
 #include "node.h"
+#include "callbacks.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
 
-Node *Node_new(size_t dataSize, void *data, Node *nextNode) {
+Node *Node_new(size_t dataSize, void *data, Node *nextNode, FreeFunc freeFunc) {
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL) {
-        printf("Error: Failed to allocate memory\n");
+        printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
     node->data = malloc(dataSize);
     if (node->data == NULL) {
-        printf("Error: Failed to allocate memory\n");
+        printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
     memcpy(node->data, data, dataSize);
     node->nextNode = nextNode ? nextNode : NULL;
+    node->freeFunc = freeFunc;
 
     return node;
 }
 
-void Node_free(Node *node) {
+void Node_free(void *data) {
+    Node *node = (Node*)data;
+    if (node->freeFunc != NULL) {
+        node->freeFunc(node->data);
+    }
     free(node->data);
     free(node);
 }
 
-TreeNode *TreeNode_new(size_t dataSize, void *data, TreeNode *rightNode, TreeNode *leftNode) {
+TreeNode *TreeNode_new(size_t dataSize, void *data, TreeNode *rightNode, TreeNode *leftNode, FreeFunc freeFunc) {
     TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
     if (node == NULL) {
-        printf("Error: Failed to allocate memory\n");
+        printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
     node->data = malloc(dataSize);
     if (node->data == NULL) {
-        printf("Error: Failed to allocate memory\n");
+        printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
     memcpy(node->data, data, dataSize);
     node->right = rightNode ? rightNode : NULL;
     node->left = leftNode ? leftNode : NULL;
+    node->freeFunc = freeFunc;
 
     return node;
 }
 
-void TreeNode_free(TreeNode *node) {
+void TreeNode_free(void *data) {
+    TreeNode *node = (TreeNode*)data;
+    if (node->freeFunc != NULL) {
+        node->freeFunc(node->data);
+    }
     free(node->data);
     free(node);
 }

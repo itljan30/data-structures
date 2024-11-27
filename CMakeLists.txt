@@ -7,6 +7,7 @@ add_library(DataStructures SHARED
     src/hash_map.c
     src/linked_list.c
     src/node.c
+    src/callbacks.c
 )
 target_include_directories(DataStructures PUBLIC ${CMAKE_SOURCE_DIR}/include)
 

@@ -1,24 +1,16 @@
 #include "hash_map.h"
 #include "dyn_arr.h"
 #include "linked_list.h"
-#include "compare_func.h"
+#include "callbacks.h"
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static void rehash(HashMap *map) {
-    void *newArray = DynArr_resizeNoCopy(map->map);
-
-    // TODO rehash all the data to fit in this new array
-
-    free(map->map);
-    map->map = newArray;
-}
-
-// https://en.wikipedia.org/wiki/MurmurHash
-// used the psuedocode algorithm section as reference
-static uint32_t murmur3_32(void *key, size_t keySize) {
+// Uses murmur hash version 3.
+// https://en.wikipedia.org/wiki/MurmurHash for more information.
+static uint32_t hashFunction(void *key, size_t keySize) {
     // constants chosen for being good at avoiding collisions I guess
     const uint32_t c1 = 0xcc9e2d51;
     const uint32_t c2 = 0x1b873593;
@@ -90,12 +82,120 @@ static uint32_t murmur3_32(void *key, size_t keySize) {
     return hash;
 }
 
-HashMap *HashMap_new(size_t elementSize, CompareFunc keyCompareFunc) {
-    HashMap *hashMap = (HashMap *)malloc(sizeof(HashMap));
-    hashMap->elementSize = elementSize;
-    hashMap->loadFactor = .75;
-    hashMap->keyCompareFunc = keyCompareFunc;
-    hashMap->map = DynArr_new(sizeof(LinkedList));
+static void rehash(HashMap *map) {
+    void *newArray = DynArr_resizeNoCopy(map->map);
 
-    return hashMap;
+    // TODO rehash all the data to fit in this new array
+
+    free(map->map->elements);
+    map->map->elements = newArray;
+}
+
+KeyValue *KeyValue_new(void *key, void *value, size_t keySize, size_t valueSize,
+                       CompareFunc keyCompareFunc, FreeFunc freeFunc) {
+    KeyValue *pair = (KeyValue*)malloc(sizeof(KeyValue));
+    if (pair == NULL) {
+        printf("ERROR: Failed to allocate memory\n");
+        exit(EXIT_FAILURE);
+    }
+
+    pair->key = malloc(keySize);
+    if (pair->key == NULL) {
+        printf("ERROR: Failed to allocate memory\n");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(pair->key, key, keySize);
+
+    pair->value = malloc(valueSize);
+    if (pair->value == NULL) {
+        printf("ERROR: Failed to allocate memory\n");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(pair->value, value, valueSize);
+    pair->freeFunc = freeFunc;
+    pair->keyCompareFunc = keyCompareFunc;
+
+    return pair;
+}
+
+void KeyValue_free(void *data) {
+    KeyValue *pair = (KeyValue*)data;
+    if (pair->freeFunc != NULL) {
+        pair->freeFunc(pair);
+    }
+    else {
+        free(pair->key);
+        free(pair->value);
+    }
+    free(pair);
+}
+
+HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFunc,
+                     CompareFunc valueCompareFunc, FreeFunc freeFunc) {
+
+    HashMap *map = (HashMap *)malloc(sizeof(HashMap));
+    map->map = DynArr_new(sizeof(LinkedList), LinkedList_free);
+    map->keySize = keySize;
+    map->valueSize = valueSize;
+    map->loadFactor = 75;
+    map->keyCompareFunc = keyCompareFunc;
+    map->valueCompareFunc = valueCompareFunc;
+    map->freeFunc = freeFunc;
+
+    return map;
+}
+
+void HashMap_free(void *data) {
+    HashMap *map = (HashMap*)data;
+    DynArr_free(map->map);
+    free(map);
+}
+
+void *HashMap_find(HashMap *map, void *key) {
+    for (int i = 0; i < map->map->capacity; i++) {
+        LinkedList *currentList = DynArr_at(map->map, i);
+        if (currentList == NULL) {
+            continue;
+        }
+        Node *currentNode = currentList->firstNode;
+        for (int j = 0; j < currentList->length; i++) {
+            if (currentNode != NULL) {
+                KeyValue *pair = (KeyValue*)currentNode->data;
+                int comparison = (pair->keyCompareFunc != NULL) ? pair->keyCompareFunc(key, pair->key)
+                                                                : defaultCompare(key, pair->key, pair->keySize);
+                if (comparison == 0) {
+                    return pair->value;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+void HashMap_set(HashMap *map, void *key, void *value) {
+    if (key == NULL) {
+        printf("ERROR: HashMap was given a NULL key\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if ((DynArr_len(map->map) * 100) / DynArr_capacity(map->map) > map->loadFactor) {
+        rehash(map);
+    }
+
+    void *prevValue = HashMap_find(map, key);
+
+    uint32_t hash = hashFunction(key, map->keySize);
+    size_t index = hash % DynArr_capacity(map->map);
+    
+    if (DynArr_at(map->map, index) == NULL) {
+        DynArr_insert(map->map, index, LinkedList_new(sizeof(KeyValue), map->freeFunc));
+    }
+
+    if (prevValue == NULL) {
+        KeyValue *pair = KeyValue_new(key, value, map->keySize, map->valueSize, map->keyCompareFunc, map->freeFunc);
+        LinkedList_prepend(DynArr_at(map->map, index), pair);
+    }
+    else {
+        memcpy(prevValue, value, map->valueSize);
+    }
 }

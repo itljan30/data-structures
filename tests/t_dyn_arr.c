@@ -3,7 +3,7 @@
 #include "dyn_arr.h"
 
 void append() {
-    DynArr *arr = DynArr_new(sizeof(char));
+    DynArr *arr = DynArr_new(sizeof(char), NULL);
     char value = 'i';
     DynArr_append(arr, &value);
     char *answer = DynArr_at(arr, 0);
@@ -18,7 +18,7 @@ void append() {
 }
 
 void resize() {
-    DynArr *arr = DynArr_new(sizeof(double));
+    DynArr *arr = DynArr_new(sizeof(double), NULL);
     for (double i = 0; i < 1000; i++) {
         DynArr_append(arr, &i);
     }
@@ -27,7 +27,7 @@ void resize() {
 
 // I don't know why I made this test, the whole pop function is just `arr->length--;`
 void pop() {
-    DynArr *arr = DynArr_new(sizeof(long));
+    DynArr *arr = DynArr_new(sizeof(long), NULL);
     for (long i = 0; i < 10; i++) {
         DynArr_append(arr, &i);
     }
@@ -37,7 +37,7 @@ void pop() {
 }
 
 void at() {
-    DynArr *arr = DynArr_new(sizeof(float));
+    DynArr *arr = DynArr_new(sizeof(float), NULL);
     float value = 3.0;
     DynArr_append(arr, &value);
     float *otherValue = DynArr_at(arr, 0);
@@ -46,7 +46,7 @@ void at() {
 }
 
 void contains() {
-    DynArr *arr = DynArr_new(sizeof(size_t));
+    DynArr *arr = DynArr_new(sizeof(size_t), NULL);
     for (int i = 2; i < 1000; i *= 2) {
         size_t value = i;
         DynArr_append(arr, &value);
@@ -58,7 +58,7 @@ void contains() {
 }
 
 void insertBasic() {
-    DynArr *arr = DynArr_new(sizeof(int));
+    DynArr *arr = DynArr_new(sizeof(int), NULL);
     int value = 5;
     DynArr_append(arr, &value);
     int nextValue = 1;
@@ -72,7 +72,7 @@ void insertBasic() {
 }
 
 void insert() {
-    DynArr *arr = DynArr_new(sizeof(int));
+    DynArr *arr = DynArr_new(sizeof(int), NULL);
     for (int i = 0; i < 99; i++) {
         DynArr_append(arr, &i);
     }
@@ -86,7 +86,7 @@ void insert() {
 }
 
 void remove() {
-    DynArr *arr = DynArr_new(sizeof(int));
+    DynArr *arr = DynArr_new(sizeof(int), NULL);
 
     for (int i = 0; i < 100; i++) {
         DynArr_append(arr, &i);
