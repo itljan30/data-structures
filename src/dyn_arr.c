@@ -44,7 +44,9 @@ void DynArr_free(void *data) {
             arr->freeFunc(arr->elements + (i * arr->elementSize));
         }
     }
-    free(arr->elements);
+    else {
+        free(arr->elements);
+    }
     free(arr);
 }
 
@@ -56,7 +58,7 @@ void DynArr_pop(DynArr *arr) {
     arr->length--;
 }
 
-void DynArr_append(DynArr *arr, const void *element) {
+void DynArr_append(DynArr *arr, void *element) {
     if (arr->length >= arr->capacity) {
         resize(arr);
     }
@@ -100,7 +102,7 @@ void DynArr_remove(DynArr *arr, const size_t index) {
 
 bool DynArr_contains(const DynArr *arr, const void *element) {
     for (int i = 0; i < arr->length; i++) {
-        const void *currentElement = (char*)arr->elements + (i * arr->elementSize);
+        const void *currentElement = arr->elements + (i * arr->elementSize);
         if (memcmp(currentElement, element, arr->elementSize) == 0) {
             return true;
         }

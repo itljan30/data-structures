@@ -37,7 +37,7 @@ void DynArr_pop(DynArr *arr);
 /**
  * Adds the given element to the end of the dynamic array.
  */
-void DynArr_append(DynArr *arr, const void *element);
+void DynArr_append(DynArr *arr, void *element);
 
 /**
  * Returns a pointer to the element at the given index.

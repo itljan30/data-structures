@@ -1,6 +1,19 @@
 #include <assert.h>
 
 #include "dyn_arr.h"
+#include "test_struct.h"
+
+void customFree() {
+    TestStruct *testStruct = TestStruct_new();
+    DynArr *arr = DynArr_new(sizeof(TestStruct), TestStruct_free);
+
+    DynArr_append(arr, testStruct);
+    TestStruct_free(testStruct);
+
+    TestStruct *newtestStruct = (TestStruct*)DynArr_at(arr, 0);
+
+    DynArr_free(arr);
+}
 
 void append() {
     DynArr *arr = DynArr_new(sizeof(char), NULL);
@@ -108,4 +121,5 @@ int main(void) {
     insertBasic();
     insert();
     remove();
+    customFree();
 }
