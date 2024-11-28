@@ -98,18 +98,16 @@ static void replaceWithSuccessor(BinaryTree *tree, TreeNode *replacedNode, TreeN
     TreeNode_free(replacedNode);
 }
 
-BinaryTree *BinaryTree_new(const size_t elementSize, CompareFunc compareFunc, FreeFunc freeFunc) {
+BinaryTree *BinaryTree_new(size_t elementSize, CompareFunc compareFunc) {
     BinaryTree *tree = (BinaryTree *)malloc(sizeof(BinaryTree));
     tree->elementSize = elementSize;
     tree->compareFunc = compareFunc;
     tree->root = NULL;
     tree->size = 0;
-    tree->freeFunc = freeFunc;
     return tree;
 }
 
-void BinaryTree_free(void *data) {
-    BinaryTree *tree = (BinaryTree*)data;
+void BinaryTree_free(BinaryTree *tree) {
     recursiveFree(tree->root);
     free(tree);
 }
@@ -117,7 +115,7 @@ void BinaryTree_free(void *data) {
 void BinaryTree_insert(BinaryTree *tree, void *element) {
     tree->size++;
     if (tree->root == NULL) {
-        TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL, tree->freeFunc);
+        TreeNode *node = TreeNode_new(element, NULL, NULL);
         tree->root = node;
         return;
     }
@@ -129,7 +127,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element) {
 
         if (comparison < 0) {
             if (currentNode->left == NULL) {
-                TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL, tree->freeFunc);
+                TreeNode *node = TreeNode_new(element, NULL, NULL);
                 currentNode->left = node;
                 return;
             }
@@ -137,7 +135,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element) {
         }
         else {
             if (currentNode->right == NULL) {
-                TreeNode *node = TreeNode_new(tree->elementSize, element, NULL, NULL, tree->freeFunc);
+                TreeNode *node = TreeNode_new(element, NULL, NULL);
                 currentNode->right = node;
                 return;
             }

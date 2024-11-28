@@ -6,12 +6,11 @@
 TestStruct *TestStruct_new() {
     TestStruct *testStruct = (TestStruct*)malloc(sizeof(TestStruct));
     testStruct->data1 = malloc(sizeof(int));
-    testStruct->data2 = malloc(sizeof(float));
-
-    int value1 = 5;
-    memcpy(testStruct->data1, &value1, sizeof(int));
-    float value2 = 5.3;
-    memcpy(testStruct->data2, &value2, sizeof(float));
+    testStruct->data2 = malloc(sizeof(double));
+    int intValue = 10;
+    double doubleValue = 100;
+    memcpy(testStruct->data1, &intValue, sizeof(int));
+    memcpy(testStruct->data2, &doubleValue, sizeof(double));
 
     return testStruct;
 }
@@ -20,5 +19,5 @@ void TestStruct_free(void *data) {
     TestStruct *testStruct = (TestStruct*)data;
     free(testStruct->data1);
     free(testStruct->data2);
-    free(testStruct);
+    free(data);
 }

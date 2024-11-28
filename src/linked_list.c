@@ -6,17 +6,15 @@
 #include <stdio.h>
 #include <string.h>
 
-LinkedList *LinkedList_new(const size_t elementSize, FreeFunc freeFunc) {
+LinkedList *LinkedList_new(const size_t elementSize) {
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
     list->elementSize = elementSize;
     list->firstNode = NULL;
     list->length = 0;
-    list->freeFunc = freeFunc;
     return list;
 }
 
-void LinkedList_free(void *data) {
-    LinkedList *list = (LinkedList*)data;
+void LinkedList_free(LinkedList *list) {
     if (list->firstNode == NULL) {
         free(list);
         return;
@@ -37,10 +35,10 @@ void LinkedList_free(void *data) {
 
 void LinkedList_append(LinkedList *list, void *element) {
     if (list->firstNode == NULL) {
-        list->firstNode = Node_new(list->elementSize, element, NULL, list->freeFunc);
+        list->firstNode = Node_new(element, NULL);
     }
     else {
-        Node *node = Node_new(list->elementSize, element, NULL, list->freeFunc);
+        Node *node = Node_new(element, NULL);
 
         Node *currentNode = list->firstNode;
         Node *nextNode = NULL;
@@ -58,10 +56,10 @@ void LinkedList_append(LinkedList *list, void *element) {
 
 void LinkedList_prepend(LinkedList *list, void *element) {
     if (list->firstNode == NULL) {
-        list->firstNode = Node_new(list->elementSize, element, NULL, list->freeFunc);
+        list->firstNode = Node_new(element, NULL);
     }
     else {
-        list->firstNode = Node_new(list->elementSize, element, list->firstNode, list->freeFunc);
+        list->firstNode = Node_new(element, list->firstNode);
     }
     list->length++;
 }
@@ -72,8 +70,7 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
         exit(EXIT_FAILURE);
     }
     if (index == 0) {
-        Node *newFirstNode = Node_new(list->elementSize, element, list->firstNode, list->freeFunc);
-        list->firstNode = newFirstNode;
+        list->firstNode = Node_new(element, list->firstNode);
         return;
     }
 
@@ -82,10 +79,11 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
         nodeBeforeInsert = nodeBeforeInsert->nextNode;
     }
 
-    Node *newNode = Node_new(list->elementSize, element, NULL, list->freeFunc);
+    Node *newNode = Node_new(element, NULL);
     if (nodeBeforeInsert->nextNode != NULL) {
         newNode->nextNode = nodeBeforeInsert->nextNode;
     }
+
     nodeBeforeInsert->nextNode = newNode;
     list->length++;
 }

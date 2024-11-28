@@ -5,61 +5,39 @@
 #include <stdlib.h>
 #include <memory.h>
 
-Node *Node_new(size_t dataSize, void *data, Node *nextNode, FreeFunc freeFunc) {
+Node *Node_new(void *data, Node *nextNode) {
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL) {
         printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
-
-    node->data = malloc(dataSize);
-    if (node->data == NULL) {
-        printf("ERROR: Failed to allocate memory\n");
-        exit(EXIT_FAILURE);
-    }
-
-    memcpy(node->data, data, dataSize);
+    node->data = data;
     node->nextNode = nextNode ? nextNode : NULL;
-    node->freeFunc = freeFunc;
 
     return node;
 }
 
-void Node_free(void *data) {
-    Node *node = (Node*)data;
-    if (node->freeFunc != NULL) {
-        node->freeFunc(node->data);
-    }
-    free(node->data);
+void Node_destroy(Node *node) {
+    // TODO frees all data it contains as well
+}
+
+void Node_free(Node *node) {
     free(node);
 }
 
-TreeNode *TreeNode_new(size_t dataSize, void *data, TreeNode *rightNode, TreeNode *leftNode, FreeFunc freeFunc) {
+TreeNode *TreeNode_new(void *data, TreeNode *rightNode, TreeNode *leftNode) {
     TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
     if (node == NULL) {
         printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
-
-    node->data = malloc(dataSize);
-    if (node->data == NULL) {
-        printf("ERROR: Failed to allocate memory\n");
-        exit(EXIT_FAILURE);
-    }
-
-    memcpy(node->data, data, dataSize);
+    node->data = data;
     node->right = rightNode ? rightNode : NULL;
     node->left = leftNode ? leftNode : NULL;
-    node->freeFunc = freeFunc;
 
     return node;
 }
 
-void TreeNode_free(void *data) {
-    TreeNode *node = (TreeNode*)data;
-    if (node->freeFunc != NULL) {
-        node->freeFunc(node->data);
-    }
-    free(node->data);
+void TreeNode_free(TreeNode *node) {
     free(node);
 }

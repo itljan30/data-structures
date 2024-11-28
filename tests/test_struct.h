@@ -3,7 +3,7 @@
 
 typedef struct {
     int *data1;
-    float *data2;
+    double *data2;
 } TestStruct;
 
 TestStruct *TestStruct_new();

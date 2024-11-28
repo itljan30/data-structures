@@ -20,7 +20,7 @@ typedef struct {
  * `LinkedList *list = LinkedList_new(sizeof(int));`.
  * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
  */
-LinkedList *LinkedList_new(const size_t elementSize, FreeFunc freeFunc);
+LinkedList *LinkedList_new(const size_t elementSize);
 
 /**
  * Frees the memory allocated to the LinkedList.
@@ -28,7 +28,7 @@ LinkedList *LinkedList_new(const size_t elementSize, FreeFunc freeFunc);
  *
  * @param list is assumed to be a LinkedList *.
  */
-void LinkedList_free(void *list);
+void LinkedList_free(LinkedList *list);
 
 /**
  * Adds the given element to the end of the given LinkedList.

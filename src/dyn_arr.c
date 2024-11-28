@@ -13,38 +13,32 @@ static void resize(DynArr *arr) {
         arr->capacity *= 2;
     }
 
-    void *newArray = malloc(arr->elementSize * arr->capacity);
+    void *newArray = malloc(sizeof(void*) * arr->capacity);
     if (newArray == NULL) {
-        printf("ERROR: Memory allocation failed\n");
+        printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < arr->length; i++) {
-        memcpy(newArray + (i * arr->elementSize), arr->elements + (i * arr->elementSize), arr->elementSize);
+    for (size_t i = 0; i < arr->length; i++) {
+        *((void**)newArray + i) = *((void**)arr->elements + i);
     }
 
     free(arr->elements);
     arr->elements = newArray;
 }
 
-DynArr *DynArr_new(const size_t elementSize, FreeFunc freeFunc) {
-    DynArr *arr = (DynArr *)malloc(sizeof(DynArr));
-    arr->elementSize = elementSize;
-    arr->length = 0;
+DynArr *DynArr_new(size_t elementSize) {
+    DynArr *arr = malloc(sizeof(DynArr));
     arr->elements = NULL;
     arr->capacity = 0;
-    arr->freeFunc = freeFunc;
+    arr->length = 0;
+    arr->elementSize = elementSize;
+
     return arr;
 }
 
-void DynArr_free(void *data) {
-    DynArr *arr = (DynArr*)data;
-    if (arr->freeFunc != NULL) {
-        for (int i = 0; i < arr->length; i++) {
-            arr->freeFunc(arr->elements + (i * arr->elementSize));
-        }
-    }
-    else {
+void DynArr_free(DynArr *arr) {
+    if (arr->elements != NULL) {
         free(arr->elements);
     }
     free(arr);
@@ -62,7 +56,7 @@ void DynArr_append(DynArr *arr, void *element) {
     if (arr->length >= arr->capacity) {
         resize(arr);
     }
-    memcpy(arr->elements + (arr->length * arr->elementSize), element, arr->elementSize);
+    *((void**)arr->elements + arr->length) = element;
     arr->length++;
 }
 
@@ -71,10 +65,10 @@ void *DynArr_at(const DynArr *arr, const size_t index) {
         printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
-    return arr->elements + (index * arr->elementSize);
+    return *((void**)arr->elements + index);
 }
 
-void DynArr_insert(DynArr *arr, const size_t index, const void *element) {
+void DynArr_insert(DynArr *arr, const size_t index, void *element) {
     if (index > arr->length) {
         printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
@@ -82,27 +76,29 @@ void DynArr_insert(DynArr *arr, const size_t index, const void *element) {
     if (arr->length >= arr->capacity) {
         resize(arr);
     }
-    for (int i = arr->length; i > index; i--) {
-        memcpy(arr->elements + (i * arr->elementSize), arr->elements + ((i - 1) * arr->elementSize), arr->elementSize);
+    // move all elements from index onward one to the right
+    for (size_t i = arr->length; i > index; i--) {
+        *((void**)arr->elements + i) = *((void**)arr->elements + (i - 1));
     }
-    memcpy(arr->elements + (index * arr->elementSize), element, arr->elementSize);
+    *((void**)arr->elements + index) = element;
     arr->length++;
 }
 
 void DynArr_remove(DynArr *arr, const size_t index) {
-    if (index > arr->length) {
+    if (index >= arr->length) {
         printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
+    // move elements after removed element one left
     for (int i = index; i < arr->length - 1; i++) {
-        memcpy(arr->elements + (i * arr->elementSize), arr->elements + ((i + 1) * arr->elementSize), arr->elementSize);
+        *((void**)arr->elements + i) = *((void**)arr->elements + (i + 1));
     }
     arr->length--;
 }
 
 bool DynArr_contains(const DynArr *arr, const void *element) {
     for (int i = 0; i < arr->length; i++) {
-        const void *currentElement = arr->elements + (i * arr->elementSize);
+        void *currentElement = *((void**)arr->elements + i);
         if (memcmp(currentElement, element, arr->elementSize) == 0) {
             return true;
         }
@@ -122,7 +118,7 @@ void *DynArr_resizeNoCopy(DynArr *arr) {
         arr->capacity *= 2;
     }
 
-    void *newArray = malloc(arr->elementSize * arr->capacity);
+    void *newArray = malloc(sizeof(void*) * arr->capacity);
     if (newArray == NULL) {
         printf("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
