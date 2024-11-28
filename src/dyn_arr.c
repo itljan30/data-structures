@@ -13,17 +13,12 @@ static void resize(DynArr *arr) {
         arr->capacity *= 2;
     }
 
-    void *newArray = malloc(arr->elementSize * arr->capacity);
+    void *newArray = realloc(arr->elements, sizeof(void*) * arr->capacity);
     if (newArray == NULL) {
         printf("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < arr->length; i++) {
-        memcpy(newArray + (i * arr->elementSize), arr->elements + (i * arr->elementSize), arr->elementSize);
-    }
-
-    free(arr->elements);
     arr->elements = newArray;
 }
 
@@ -60,7 +55,7 @@ void DynArr_append(DynArr *arr, const void *element) {
     if (arr->length >= arr->capacity) {
         resize(arr);
     }
-    memcpy(arr->elements + (arr->length * arr->elementSize), element, arr->elementSize);
+
     arr->length++;
 }
 
