@@ -37,7 +37,7 @@ void DynArr_pop(DynArr *arr);
 /**
  * Adds the given element to the end of the dynamic array.
  */
-void DynArr_append(DynArr *arr, const void *element);
+void DynArr_append(DynArr *arr, void *element);
 
 /**
  * Returns a pointer to the element at the given index.
@@ -48,7 +48,7 @@ void *DynArr_at(const DynArr *arr, const size_t index);
  * Inserts the given element at the given index.
  * Moves elements to the right as needed.
  */
-void DynArr_insert(DynArr *arr, const size_t index, const void *element);
+void DynArr_insert(DynArr *arr, const size_t index, void *element);
 
 /**
  * Removes the element at the given index.

@@ -35,7 +35,6 @@ void LinkedList_free(LinkedList *list) {
 
 void LinkedList_append(LinkedList *list, void *element) {
     if (list->firstNode == NULL) {
-        list->firstNode = malloc(sizeof(Node*));
         list->firstNode = Node_new(element, NULL);
     }
     else {
@@ -46,7 +45,7 @@ void LinkedList_append(LinkedList *list, void *element) {
         for (int i = 0; i < list->length; i++) {
             nextNode = currentNode->nextNode;
             if (nextNode == NULL) {
-                memcpy(currentNode->nextNode, node, sizeof(void*));
+                currentNode->nextNode = node;
                 break;
             }
             currentNode = nextNode;
@@ -57,11 +56,10 @@ void LinkedList_append(LinkedList *list, void *element) {
 
 void LinkedList_prepend(LinkedList *list, void *element) {
     if (list->firstNode == NULL) {
-        list->firstNode = malloc(sizeof(Node*));
         list->firstNode = Node_new(element, NULL);
     }
     else {
-        memcpy(list->firstNode, Node_new(element, list->firstNode), sizeof(void*));
+        list->firstNode = Node_new(element, list->firstNode);
     }
     list->length++;
 }
@@ -72,7 +70,7 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
         exit(EXIT_FAILURE);
     }
     if (index == 0) {
-        memcpy(list->firstNode, Node_new(element, list->firstNode), sizeof(void*));
+        list->firstNode = Node_new(element, list->firstNode);
         return;
     }
 
@@ -83,10 +81,10 @@ void LinkedList_insert(LinkedList *list, void *element, const size_t index) {
 
     Node *newNode = Node_new(element, NULL);
     if (nodeBeforeInsert->nextNode != NULL) {
-        memcpy(newNode->nextNode, nodeBeforeInsert->nextNode, sizeof(void*));
+        newNode->nextNode = nodeBeforeInsert->nextNode;
     }
 
-    memcpy(nodeBeforeInsert->nextNode, newNode, sizeof(void*));
+    nodeBeforeInsert->nextNode = newNode;
     list->length++;
 }
 
@@ -98,7 +96,7 @@ void LinkedList_remove(LinkedList *list, const size_t index) {
     if (index == 0) {
         Node *newHead = list->firstNode->nextNode;
         Node_free(list->firstNode);
-        memcpy(list->firstNode, newHead, sizeof(void*));
+        list->firstNode = newHead;
         return;
     }
 
@@ -117,7 +115,7 @@ void LinkedList_remove(LinkedList *list, const size_t index) {
 
     Node *newNextNode = nodeBeforeRemove->nextNode->nextNode;
     Node_free(nodeBeforeRemove->nextNode);
-    memcpy(nodeBeforeRemove->nextNode, newNextNode, sizeof(void*));
+    nodeBeforeRemove->nextNode = newNextNode;
 }
 
 size_t LinkedList_len(LinkedList *list) {

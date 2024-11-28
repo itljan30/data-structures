@@ -20,7 +20,7 @@ static void resize(DynArr *arr) {
     }
 
     for (size_t i = 0; i < arr->length; i++) {
-        memcpy(newArray + (i * sizeof(void*)), arr->elements + (i * sizeof(void*)), sizeof(void*));
+        *((void**)newArray + i) = *((void**)arr->elements + i);
     }
 
     free(arr->elements);
@@ -52,11 +52,11 @@ void DynArr_pop(DynArr *arr) {
     arr->length--;
 }
 
-void DynArr_append(DynArr *arr, const void *element) {
+void DynArr_append(DynArr *arr, void *element) {
     if (arr->length >= arr->capacity) {
         resize(arr);
     }
-    memcpy(arr->elements + (arr->length * sizeof(void*)), element, sizeof(void*));
+    *((void**)arr->elements + arr->length) = element;
     arr->length++;
 }
 
@@ -65,10 +65,10 @@ void *DynArr_at(const DynArr *arr, const size_t index) {
         printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
-    return arr->elements + (index * sizeof(void*));
+    return *((void**)arr->elements + index);
 }
 
-void DynArr_insert(DynArr *arr, const size_t index, const void *element) {
+void DynArr_insert(DynArr *arr, const size_t index, void *element) {
     if (index > arr->length) {
         printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
@@ -77,28 +77,28 @@ void DynArr_insert(DynArr *arr, const size_t index, const void *element) {
         resize(arr);
     }
     // move all elements from index onward one to the right
-    for (size_t i = index; i < arr->length; i++) {
-        memcpy(arr->elements + ((index + 1) * sizeof(void*)), arr->elements + (index * sizeof(void*)), sizeof(void*));
+    for (size_t i = arr->length; i > index; i--) {
+        *((void**)arr->elements + i) = *((void**)arr->elements + (i - 1));
     }
-    memcpy(arr->elements + (index * sizeof(void*)), element, sizeof(void*));
+    *((void**)arr->elements + index) = element;
     arr->length++;
 }
 
 void DynArr_remove(DynArr *arr, const size_t index) {
-    if (index > arr->length) {
+    if (index >= arr->length) {
         printf("ERROR: Index out of range\n");
         exit(EXIT_FAILURE);
     }
     // move elements after removed element one left
     for (int i = index; i < arr->length - 1; i++) {
-        memcpy(arr->elements + (i * sizeof(void*)), arr->elements + ((i + 1) * sizeof(void*)), sizeof(void*));
+        *((void**)arr->elements + i) = *((void**)arr->elements + (i + 1));
     }
     arr->length--;
 }
 
 bool DynArr_contains(const DynArr *arr, const void *element) {
     for (int i = 0; i < arr->length; i++) {
-        void *currentElement = arr->elements + (i * sizeof(void*));
+        void *currentElement = *((void**)arr->elements + i);
         if (memcmp(currentElement, element, arr->elementSize) == 0) {
             return true;
         }

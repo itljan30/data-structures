@@ -7,9 +7,6 @@
 typedef struct {
     void *key;
     void *value;
-    size_t keySize;
-    size_t valueSize;
-    FreeFunc freeFunc;
     CompareFunc keyCompareFunc;
 } KeyValue;
 
@@ -17,10 +14,9 @@ typedef struct {
  * Returns a pointer to a KeyValue pair with the given key and value.
  * WARNING: Make sure to call `KeyValue_free()` to avoid memory leaks.
  */
-KeyValue *KeyValue_new(void *key, void *value, size_t keySize, size_t valueSize,
-                       CompareFunc keyCompareFunc, FreeFunc freeFunc);
+KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompareFunc);
 
-void KeyValue_free(void *pair);
+void KeyValue_free(KeyValue *pair);
 
 typedef struct {
     // a DynArr of LinkedList whose data is KeyValuePair
@@ -54,13 +50,12 @@ typedef struct {
  *                 }
  *                 ```
  */
-HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFunc,
-                     CompareFunc valueCompareFunc, FreeFunc freeFunc);
+HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFunc, CompareFunc valueCompareFunc);
 
 /**
  * Frees all memory allocated to the given HashMap.
  */
-void HashMap_free(void *map);
+void HashMap_free(HashMap *map);
 
 /*
  * Adds the given value to the given HashMap if it does not exist yet,

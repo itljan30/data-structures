@@ -91,47 +91,27 @@ static void rehash(HashMap *map) {
     map->map->elements = newArray;
 }
 
-KeyValue *KeyValue_new(void *key, void *value, size_t keySize, size_t valueSize,
-                       CompareFunc keyCompareFunc, FreeFunc freeFunc) {
+KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompareFunc) {
     KeyValue *pair = (KeyValue*)malloc(sizeof(KeyValue));
     if (pair == NULL) {
         printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
-    pair->key = malloc(keySize);
-    if (pair->key == NULL) {
-        printf("ERROR: Failed to allocate memory\n");
-        exit(EXIT_FAILURE);
-    }
-    memcpy(pair->key, key, keySize);
-
-    pair->value = malloc(valueSize);
-    if (pair->value == NULL) {
-        printf("ERROR: Failed to allocate memory\n");
-        exit(EXIT_FAILURE);
-    }
-    memcpy(pair->value, value, valueSize);
-    pair->freeFunc = freeFunc;
+    pair->key = key;
+    pair->value = value;
     pair->keyCompareFunc = keyCompareFunc;
 
     return pair;
 }
 
-void KeyValue_free(void *data) {
-    KeyValue *pair = (KeyValue*)data;
-    if (pair->freeFunc != NULL) {
-        pair->freeFunc(pair);
-    }
-    else {
-        free(pair->key);
-        free(pair->value);
-    }
+void KeyValue_free(KeyValue *pair) {
+    free(pair->key);
+    free(pair->value);
     free(pair);
 }
 
-HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFunc,
-                     CompareFunc valueCompareFunc, FreeFunc freeFunc) {
+HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFunc, CompareFunc valueCompareFunc) {
 
     HashMap *map = (HashMap *)malloc(sizeof(HashMap));
     /* map->map = DynArr_new(sizeof(LinkedList), LinkedList_free); */
@@ -140,20 +120,19 @@ HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFun
     map->loadFactor = 75;
     map->keyCompareFunc = keyCompareFunc;
     map->valueCompareFunc = valueCompareFunc;
-    map->freeFunc = freeFunc;
 
     return map;
 }
 
-void HashMap_free(void *data) {
-    HashMap *map = (HashMap*)data;
+void HashMap_free(HashMap *map) {
+    // TODO go through all the keyvalue pairs and call free on those
     DynArr_free(map->map);
     free(map);
 }
 
 void *HashMap_find(HashMap *map, void *key) {
     for (int i = 0; i < map->map->capacity; i++) {
-        LinkedList *currentList = DynArr_at(map->map, i);
+        LinkedList *currentList = (LinkedList*)DynArr_at(map->map, i);
         if (currentList == NULL) {
             continue;
         }
@@ -162,7 +141,7 @@ void *HashMap_find(HashMap *map, void *key) {
             if (currentNode != NULL) {
                 KeyValue *pair = (KeyValue*)currentNode->data;
                 int comparison = (pair->keyCompareFunc != NULL) ? pair->keyCompareFunc(key, pair->key)
-                                                                : defaultCompare(key, pair->key, pair->keySize);
+                                                                : defaultCompare(key, pair->key, map->keySize);
                 if (comparison == 0) {
                     return pair->value;
                 }
@@ -188,14 +167,14 @@ void HashMap_set(HashMap *map, void *key, void *value) {
     size_t index = hash % DynArr_capacity(map->map);
     
     if (DynArr_at(map->map, index) == NULL) {
-        /* DynArr_insert(map->map, index, LinkedList_new(sizeof(KeyValue), map->freeFunc)); */
+        DynArr_insert(map->map, index, LinkedList_new(sizeof(KeyValue)));
     }
 
     if (prevValue == NULL) {
-        KeyValue *pair = KeyValue_new(key, value, map->keySize, map->valueSize, map->keyCompareFunc, map->freeFunc);
+        KeyValue *pair = KeyValue_new(key, value, map->keyCompareFunc);
         LinkedList_prepend(DynArr_at(map->map, index), pair);
     }
     else {
-        memcpy(prevValue, value, map->valueSize);
+        prevValue = value;
     }
 }

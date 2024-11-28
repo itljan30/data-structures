@@ -4,14 +4,12 @@
 #include "test_struct.h"
 
 void customStructs() {
-    DynArr *arr = DynArr_new(sizeof(int));
+    DynArr *arr = DynArr_new(sizeof(TestStruct));
     for (int i = 0; i < 100; i++) {
         TestStruct *testStruct = TestStruct_new();
         DynArr_append(arr, testStruct);
         assert(DynArr_at(arr, i) == testStruct);
     }
-
-
     int range = DynArr_len(arr);
     for (int i = 0; i < range; i++) {
         TestStruct_free(DynArr_at(arr, i));
@@ -78,8 +76,6 @@ void insertBasic() {
     DynArr *arr = DynArr_new(sizeof(int));
     int value = 5;
     DynArr_append(arr, &value);
-    int otherValue = 9;
-    DynArr_append(arr, &otherValue);
     int nextValue = 1;
     DynArr_insert(arr, 0, &nextValue);
     int *indexZero = (int*)DynArr_at(arr, 0);
@@ -93,7 +89,8 @@ void insertBasic() {
 void insert() {
     DynArr *arr = DynArr_new(sizeof(int));
     for (int i = 0; i < 99; i++) {
-        DynArr_append(arr, &i);
+        int value = i;
+        DynArr_append(arr, &value);
     }
     int value = 1000;
     DynArr_insert(arr, 50, &value);
@@ -107,11 +104,17 @@ void insert() {
 void remove() {
     DynArr *arr = DynArr_new(sizeof(int));
 
+    int buffer[100];
     for (int i = 0; i < 100; i++) {
-        DynArr_append(arr, &i);
+        buffer[i] = i;
     }
+    for (int i = 0; i < 100; i++) {
+        DynArr_append(arr, &buffer[i]);
+    }
+
     DynArr_remove(arr, 50);
     int *arrFifty = (int*)DynArr_at(arr, 50);
+    assert(*arrFifty != 50);
     assert(*arrFifty == 51);
     assert(DynArr_len(arr) == 99);
 
