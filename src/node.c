@@ -5,31 +5,26 @@
 #include <stdlib.h>
 #include <memory.h>
 
-Node *Node_new(size_t dataSize, void *data, Node *nextNode, FreeFunc freeFunc) {
+Node *Node_new(void *data, Node *nextNode) {
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL) {
         printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
-    node->data = malloc(dataSize);
+    node->data = malloc(sizeof(void*));
     if (node->data == NULL) {
         printf("ERROR: Failed to allocate memory\n");
         exit(EXIT_FAILURE);
     }
 
-    memcpy(node->data, data, dataSize);
+    memcpy(node->data, data, sizeof(void*));
     node->nextNode = nextNode ? nextNode : NULL;
-    node->freeFunc = freeFunc;
 
     return node;
 }
 
-void Node_free(void *data) {
-    Node *node = (Node*)data;
-    if (node->freeFunc != NULL) {
-        node->freeFunc(node->data);
-    }
+void Node_free(Node *node) {
     free(node->data);
     free(node);
 }

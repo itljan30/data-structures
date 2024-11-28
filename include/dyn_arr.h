@@ -19,7 +19,7 @@ typedef struct {
  * Example usage: `DynArr *arr = DynArr_new(sizeof(int));` .
  * WARNING: Be sure to call DynArr_free() to avoid memory leaks.
  */
-DynArr *DynArr_new(const size_t elementSize, FreeFunc freeFunc);
+DynArr *DynArr_new(const size_t elementSize);
 
 /**
  * Frees the memory allocated to the given array.
@@ -27,7 +27,7 @@ DynArr *DynArr_new(const size_t elementSize, FreeFunc freeFunc);
  *
  * @param arr is assumed to be a DynArr *.
  */
-void DynArr_free(void *arr);
+void DynArr_free(DynArr *arr);
 
 /**
  * Removes the final item from the dynamic array.

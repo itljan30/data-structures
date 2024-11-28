@@ -134,7 +134,7 @@ HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFun
                      CompareFunc valueCompareFunc, FreeFunc freeFunc) {
 
     HashMap *map = (HashMap *)malloc(sizeof(HashMap));
-    map->map = DynArr_new(sizeof(LinkedList), LinkedList_free);
+    /* map->map = DynArr_new(sizeof(LinkedList), LinkedList_free); */
     map->keySize = keySize;
     map->valueSize = valueSize;
     map->loadFactor = 75;
@@ -188,7 +188,7 @@ void HashMap_set(HashMap *map, void *key, void *value) {
     size_t index = hash % DynArr_capacity(map->map);
     
     if (DynArr_at(map->map, index) == NULL) {
-        DynArr_insert(map->map, index, LinkedList_new(sizeof(KeyValue), map->freeFunc));
+        /* DynArr_insert(map->map, index, LinkedList_new(sizeof(KeyValue), map->freeFunc)); */
     }
 
     if (prevValue == NULL) {

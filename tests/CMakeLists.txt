@@ -1,6 +1,6 @@
 project(tests)
 
-add_executable(DynArrTest t_dyn_arr.c)
+add_executable(DynArrTest t_dyn_arr.c test_struct.c)
 add_executable(LinkedListTest t_linked_list.c)
 add_executable(BinaryTreeTest t_binary_tree.c)
 add_executable(HashMapTest t_hash_map.c)

@@ -15,7 +15,7 @@ typedef struct Node {
  * Returns a node with the given data and next node. 
  * NOTE: If you don't have a next node, put NULL.
  */
-Node *Node_new(size_t dataSize, void *data, Node *nextNode, FreeFunc freeFunc);
+Node *Node_new(void *data, Node *nextNode);
 
 /**
  * Frees the memory allocated to the node.
@@ -23,7 +23,7 @@ Node *Node_new(size_t dataSize, void *data, Node *nextNode, FreeFunc freeFunc);
  *
  * @param node is assumed to be a Node *.
  */
-void Node_free(void *node);
+void Node_free(Node *node);
 
 typedef struct TreeNode {
     void *data;

@@ -1,24 +1,41 @@
 #include <assert.h>
 
 #include "dyn_arr.h"
+#include "test_struct.h"
+
+void customStructs() {
+    DynArr *arr = DynArr_new(sizeof(int));
+    for (int i = 0; i < 100; i++) {
+        TestStruct *testStruct = TestStruct_new();
+        DynArr_append(arr, testStruct);
+        assert(DynArr_at(arr, i) == testStruct);
+    }
+
+
+    int range = DynArr_len(arr);
+    for (int i = 0; i < range; i++) {
+        TestStruct_free(DynArr_at(arr, i));
+    }
+    DynArr_free(arr);
+}
 
 void append() {
-    DynArr *arr = DynArr_new(sizeof(char), NULL);
+    DynArr *arr = DynArr_new(sizeof(char));
     char value = 'i';
     DynArr_append(arr, &value);
-    char *answer = DynArr_at(arr, 0);
+    char *answer = (char*)DynArr_at(arr, 0);
     assert(*answer == 'i');
 
     char value2 = 'j';
     DynArr_append(arr, &value2);
-    char *answer2 = DynArr_at(arr, 1);
+    char *answer2 = (char*)DynArr_at(arr, 1);
     assert(*answer2 == 'j');
 
     DynArr_free(arr);
 }
 
 void resize() {
-    DynArr *arr = DynArr_new(sizeof(double), NULL);
+    DynArr *arr = DynArr_new(sizeof(double));
     for (double i = 0; i < 1000; i++) {
         DynArr_append(arr, &i);
     }
@@ -27,7 +44,7 @@ void resize() {
 
 // I don't know why I made this test, the whole pop function is just `arr->length--;`
 void pop() {
-    DynArr *arr = DynArr_new(sizeof(long), NULL);
+    DynArr *arr = DynArr_new(sizeof(long));
     for (long i = 0; i < 10; i++) {
         DynArr_append(arr, &i);
     }
@@ -37,16 +54,16 @@ void pop() {
 }
 
 void at() {
-    DynArr *arr = DynArr_new(sizeof(float), NULL);
+    DynArr *arr = DynArr_new(sizeof(float));
     float value = 3.0;
     DynArr_append(arr, &value);
-    float *otherValue = DynArr_at(arr, 0);
+    float *otherValue = (float*)DynArr_at(arr, 0);
     assert(*otherValue == value);
     DynArr_free(arr);
 }
 
 void contains() {
-    DynArr *arr = DynArr_new(sizeof(size_t), NULL);
+    DynArr *arr = DynArr_new(sizeof(size_t));
     for (int i = 2; i < 1000; i *= 2) {
         size_t value = i;
         DynArr_append(arr, &value);
@@ -58,13 +75,15 @@ void contains() {
 }
 
 void insertBasic() {
-    DynArr *arr = DynArr_new(sizeof(int), NULL);
+    DynArr *arr = DynArr_new(sizeof(int));
     int value = 5;
     DynArr_append(arr, &value);
+    int otherValue = 9;
+    DynArr_append(arr, &otherValue);
     int nextValue = 1;
     DynArr_insert(arr, 0, &nextValue);
-    int *indexZero = DynArr_at(arr, 0);
-    int *indexOne = DynArr_at(arr, 1);
+    int *indexZero = (int*)DynArr_at(arr, 0);
+    int *indexOne = (int*)DynArr_at(arr, 1);
     assert(*indexZero == nextValue);
     assert(*indexOne == value);
 
@@ -72,27 +91,27 @@ void insertBasic() {
 }
 
 void insert() {
-    DynArr *arr = DynArr_new(sizeof(int), NULL);
+    DynArr *arr = DynArr_new(sizeof(int));
     for (int i = 0; i < 99; i++) {
         DynArr_append(arr, &i);
     }
     int value = 1000;
     DynArr_insert(arr, 50, &value);
     assert(DynArr_len(arr) == 100);
-    int *arrFifty = DynArr_at(arr, 50);
+    int *arrFifty = (int*)DynArr_at(arr, 50);
     assert(*arrFifty == value);
 
     DynArr_free(arr);
 }
 
 void remove() {
-    DynArr *arr = DynArr_new(sizeof(int), NULL);
+    DynArr *arr = DynArr_new(sizeof(int));
 
     for (int i = 0; i < 100; i++) {
         DynArr_append(arr, &i);
     }
     DynArr_remove(arr, 50);
-    int *arrFifty = DynArr_at(arr, 50);
+    int *arrFifty = (int*)DynArr_at(arr, 50);
     assert(*arrFifty == 51);
     assert(DynArr_len(arr) == 99);
 
@@ -108,4 +127,5 @@ int main(void) {
     insertBasic();
     insert();
     remove();
+    customStructs();
 }
