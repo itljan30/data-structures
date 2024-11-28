@@ -118,7 +118,7 @@ void *DynArr_resizeNoCopy(DynArr *arr) {
         arr->capacity *= 2;
     }
 
-    void *newArray = malloc(sizeof(void*) * arr->capacity);
+    void *newArray = calloc(arr->capacity, sizeof(void*) * arr->capacity);
     if (newArray == NULL) {
         printf("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
@@ -129,4 +129,8 @@ void *DynArr_resizeNoCopy(DynArr *arr) {
 
 size_t DynArr_capacity(DynArr *arr) {
     return arr->capacity;
+}
+
+void DynArr_set(DynArr *arr, size_t index, void *element) {
+    *((void**)arr->elements + index) = element;
 }

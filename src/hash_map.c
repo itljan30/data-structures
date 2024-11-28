@@ -82,13 +82,47 @@ static uint32_t hashFunction(void *key, size_t keySize) {
     return hash;
 }
 
-static void rehash(HashMap *map) {
-    void *newArray = DynArr_resizeNoCopy(map->map);
+static void setPair(HashMap *map, KeyValue *pair) {
+    uint32_t hash = hashFunction(pair->key, map->keySize);
+    size_t index = hash % DynArr_capacity(map->map);
+    
+    if (DynArr_at(map->map, index) == NULL) {
+        DynArr_set(map->map, index, LinkedList_new(sizeof(KeyValue)));
+    }
 
-    // TODO rehash all the data to fit in this new array
+    LinkedList_prepend(DynArr_at(map->map, index), pair);
+}
+
+static void rehash(HashMap *map) {
+    DynArr *tempArr = DynArr_new(sizeof(KeyValue));
+    for (int i = 0; i < DynArr_capacity(map->map); i++) {
+        if (DynArr_at(map->map, i) != NULL) {
+            LinkedList *list = (LinkedList*)DynArr_at(map->map, i);
+            Node *currentNode = list->firstNode;
+            while (currentNode != NULL) {
+                DynArr_append(tempArr, currentNode->data);
+                currentNode = currentNode->nextNode;
+            }
+        }
+    }
+
+    void *newArray = DynArr_resizeNoCopy(map->map);
 
     free(map->map->elements);
     map->map->elements = newArray;
+
+    for (int i = 0; i < DynArr_len(tempArr); i++) {
+
+        setPair(map, DynArr_at(tempArr, i));
+    }
+
+    for (int i = 0; i < DynArr_capacity(map->map); i++) {
+        LinkedList *list = DynArr_at(map->map, i);
+        if (list != NULL) {
+            LinkedList_free(list);
+        }
+    }
+    DynArr_free(tempArr);
 }
 
 KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompareFunc) {
@@ -125,7 +159,18 @@ HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFun
 }
 
 void HashMap_free(HashMap *map) {
-    // TODO go through all the keyvalue pairs and call free on those
+    for (int i = 0; i < DynArr_capacity(map->map); i++) {
+        LinkedList *list = DynArr_at(map->map, i);
+        if (list != NULL) {
+            Node *currentNode = list->firstNode;
+            while (currentNode != NULL) {
+                KeyValue_free(currentNode->data);
+
+                currentNode = currentNode->nextNode;
+            }
+            LinkedList_free(list);
+        }
+    }
     DynArr_free(map->map);
     free(map);
 }
@@ -157,7 +202,7 @@ void HashMap_set(HashMap *map, void *key, void *value) {
         exit(EXIT_FAILURE);
     }
 
-    if ((DynArr_len(map->map) * 100) / DynArr_capacity(map->map) > map->loadFactor) {
+    while (map->map == NULL || (DynArr_len(map->map) * 100) / DynArr_capacity(map->map) > map->loadFactor) {
         rehash(map);
     }
 
@@ -167,7 +212,7 @@ void HashMap_set(HashMap *map, void *key, void *value) {
     size_t index = hash % DynArr_capacity(map->map);
     
     if (DynArr_at(map->map, index) == NULL) {
-        DynArr_insert(map->map, index, LinkedList_new(sizeof(KeyValue)));
+        DynArr_set(map->map, index, LinkedList_new(sizeof(KeyValue)));
     }
 
     if (prevValue == NULL) {

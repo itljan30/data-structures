@@ -78,4 +78,6 @@ void *DynArr_resizeNoCopy(DynArr *arr);
  */
 size_t DynArr_capacity(DynArr *arr);
 
+void DynArr_set(DynArr *arr, size_t index, void *element);
+
 #endif
