@@ -3,7 +3,7 @@
 #include <assert.h>
 
 void set() {
-    HashMap *map = HashMap_new(sizeof(char), sizeof(float), NULL, NULL);
+    HashMap *map = HashMap_new(sizeof(char), sizeof(float), NULL);
     char key = 'e';
     float value = 35.2;
     HashMap_set(map, &key, &value);
@@ -24,7 +24,7 @@ void set1000() {
         keyBuffer[i] = key;
         valueBuffer[i] = value;
     }
-    HashMap *map = HashMap_new(sizeof(char), sizeof(float), NULL, NULL);
+    HashMap *map = HashMap_new(sizeof(char), sizeof(float), NULL);
     for (int i = 0; i < 1000; i++) {
         HashMap_set(map, &keyBuffer[i], &valueBuffer[i]);
     }
@@ -44,7 +44,7 @@ void set1000Unique() {
         keyBuffer[i] = i;
         valueBuffer[i] = i;
     }
-    HashMap *map = HashMap_new(sizeof(int), sizeof(double), NULL, NULL);
+    HashMap *map = HashMap_new(sizeof(int), sizeof(double), NULL);
     for (int i = 0; i < 1000; i++) {
         HashMap_set(map, &keyBuffer[i], &valueBuffer[i]);
     }
@@ -66,7 +66,7 @@ void remove() {
         keyBuffer[i] = (double)i;
         valueBuffer[i] = (float)i;
     }
-    HashMap *map = HashMap_new(sizeof(double), sizeof(float), NULL, NULL);
+    HashMap *map = HashMap_new(sizeof(double), sizeof(float), NULL);
     for (int i = 0; i < 1000; i++) {
         HashMap_set(map, &keyBuffer[i], &valueBuffer[i]);
     }

@@ -10,7 +10,7 @@ typedef struct {
     DynArr *edges; // DynArr of Edge
 } GraphNode;
 
-GraphNode *GraphNode_new(void *data, size_t dataSize, DynArr *edges);
+GraphNode *GraphNode_new(void *data, size_t dataSize);
 
 void GraphNode_free(GraphNode *node);
 
@@ -25,9 +25,11 @@ void Edge_free(Edge *edge);
 
 typedef struct {
     HashMap *nodes; // HashMap of GraphNode
+    CompareFunc valueCompare;
+    size_t dataSize;
 } Graph;
 
-Graph *Graph_new(size_t keySize, size_t dataSize, CompareFunc keyCompare);
+Graph *Graph_new(size_t keySize, size_t dataSize, CompareFunc keyCompare, CompareFunc valueCompare);
 
 void Graph_free(Graph *graph);
 
@@ -35,7 +37,7 @@ void Graph_add(Graph *graph, void *key, void *data);
 
 void Graph_remove(Graph *graph, void *key);
 
-void Graph_connect(Graph *graph, void *srcKey, void *destKey);
+void Graph_connect(Graph *graph, void *srcKey, void *destKey, float weight);
 
 void Graph_disconnect(Graph *graph, void *srcKey, void *destKey);
 
