@@ -1,8 +1,28 @@
 #ifndef BINARY_TREE_H
 #define BINARY_TREE_H
 
-#include "node.h"
 #include "callbacks.h"
+
+typedef struct TreeNode {
+    void *data;
+    struct TreeNode *left;
+    struct TreeNode *right;
+    FreeFunc freeFunc;
+} TreeNode;
+
+/**
+ * Returns a node with the given data and left/right node.
+ * NOTE: If you don't have a left/right node, put NULL.
+ */
+TreeNode *TreeNode_new(void *data, TreeNode *rightNode, TreeNode *leftNode);
+
+/**
+ * Frees all memory allocated to the given node.
+ * Uses `free()` if no custom free function was given.
+ *
+ * @param node is assumed to be a Node *.
+ */
+void TreeNode_free(TreeNode *node);
 
 typedef struct {
     TreeNode *root;

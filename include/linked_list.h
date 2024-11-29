@@ -4,11 +4,30 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "node.h"
 #include "callbacks.h"
 
+typedef struct ListNode {
+    void *data;
+    struct ListNode *nextNode;
+    FreeFunc freeFunc;
+} ListNode;
+
+/**
+ * Returns a node with the given data and next node. 
+ * NOTE: If you don't have a next node, put NULL.
+ */
+ListNode *ListNode_new(void *data, ListNode *nextNode);
+
+/**
+ * Frees the memory allocated to the node.
+ * Uses `free()` if no custom free function was given.
+ *
+ * @param node is assumed to be a ListNode *.
+ */
+void ListNode_free(ListNode *node);
+
 typedef struct {
-    Node *firstNode;
+    ListNode *firstNode;
     size_t length;
     size_t elementSize;
     FreeFunc freeFunc;

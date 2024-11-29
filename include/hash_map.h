@@ -7,14 +7,14 @@
 typedef struct {
     void *key;
     void *value;
-    CompareFunc keyCompareFunc;
+    CompareFunc keyCompare;
 } KeyValue;
 
 /**
  * Returns a pointer to a KeyValue pair with the given key and value.
  * WARNING: Make sure to call `KeyValue_free()` to avoid memory leaks.
  */
-KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompareFunc);
+KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompare);
 
 void KeyValue_free(KeyValue *pair);
 
@@ -26,15 +26,14 @@ typedef struct {
     size_t keySize;
     size_t valueSize;
     size_t loadFactor;
-    CompareFunc keyCompareFunc;
-    CompareFunc valueCompareFunc;
+    CompareFunc keyCompare;
 } HashMap;
 
 /**
  * Returns a pointer to an empty HashMap.
  * WARNING: Make sure to call `HashMap_free()` to avoid memory leaks.
  *
- * @param keyCompareFunc A comparison function for comparing two keys.
+ * @param keyCompare A comparison function for comparing two keys.
  *                    Function must be in the form `int compareFunc(void *a, void *b)`.
  *                    It should return a negative int if `a < b`, 0 if `a == b`, and a positive int if `a > b`.
  *                    If `compareFunc == NULL`, it will compare values byte by byte.
@@ -51,7 +50,7 @@ typedef struct {
  *                 }
  *                 ```
  */
-HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompareFunc, CompareFunc valueCompareFunc);
+HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompare);
 
 /**
  * Frees all memory allocated to the given HashMap.
@@ -75,6 +74,6 @@ void *HashMap_find(HashMap *map, void *key);
  */
 void HashMap_remove(HashMap *map, void *key);
 
-// void HashMap_removeAndFree(HashMap *map, void *key, FreeFunc freeFunc);
+// TODO void HashMap_removeAndFree(HashMap *map, void *key, FreeFunc freeFunc);
 
 #endif

@@ -1,8 +1,26 @@
 #include "binary_tree.h"
-#include "node.h"
 #include "callbacks.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+TreeNode *TreeNode_new(void *data, TreeNode *rightNode, TreeNode *leftNode) {
+    TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
+    if (node == NULL) {
+        printf("ERROR: Failed to allocate memory\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->right = rightNode ? rightNode : NULL;
+    node->left = leftNode ? leftNode : NULL;
+
+    return node;
+}
+
+void TreeNode_free(TreeNode *node) {
+    free(node);
+}
 
 static int RIGHT = 0;
 static int LEFT = 1;
