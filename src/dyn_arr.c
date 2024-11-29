@@ -118,11 +118,13 @@ void *DynArr_resizeNoCopy(DynArr *arr) {
         arr->capacity *= 2;
     }
 
-    void *newArray = calloc(arr->capacity, sizeof(void*) * arr->capacity);
+    void *newArray = malloc(sizeof(void*) * arr->capacity);
     if (newArray == NULL) {
         printf("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
+
+    arr->length = 0;
 
     return newArray;
 }

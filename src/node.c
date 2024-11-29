@@ -18,7 +18,7 @@ Node *Node_new(void *data, Node *nextNode) {
 }
 
 void Node_destroy(Node *node) {
-    // TODO frees all data it contains as well
+    // TODO frees all data it points to as well
 }
 
 void Node_free(Node *node) {

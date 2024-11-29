@@ -21,12 +21,13 @@ void KeyValue_free(KeyValue *pair);
 typedef struct {
     // a DynArr of LinkedList whose data is KeyValuePair
     DynArr *map;
+    size_t usedBuckets;
+    size_t length;
     size_t keySize;
     size_t valueSize;
     size_t loadFactor;
     CompareFunc keyCompareFunc;
     CompareFunc valueCompareFunc;
-    FreeFunc freeFunc;
 } HashMap;
 
 /**
@@ -64,9 +65,16 @@ void HashMap_free(HashMap *map);
 void HashMap_set(HashMap *map, void *key, void *value);
 
 /**
- * Returns the value at the given key if it exists.
+ * Returns a pointer to the value at the given key if it exists.
  * Returns NULL if the given key does not exist.
  */
 void *HashMap_find(HashMap *map, void *key);
+
+/**
+ * Removes the given key from the given HashMap.
+ */
+void HashMap_remove(HashMap *map, void *key);
+
+// void HashMap_removeAndFree(HashMap *map, void *key, FreeFunc freeFunc);
 
 #endif
