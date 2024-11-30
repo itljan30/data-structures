@@ -1,12 +1,13 @@
 #include "graph.h"
 #include "hash_map.h"
+#include "dyn_arr.h"
 
 #include <stdio.h>
 
 GraphNode *GraphNode_new(void *data, size_t dataSize) {
     GraphNode *node = (GraphNode*)malloc(sizeof(GraphNode));
     node->data = data;
-    node->edges = DynArr_new(dataSize);
+    node->edges = DynArr_new(sizeof(Edge));
 
     return node;
 }
@@ -43,7 +44,8 @@ void Graph_free(Graph *graph) {
 }
 
 void Graph_add(Graph *graph, void *key, void *data) {
-    HashMap_set(graph->nodes, key, data);
+    GraphNode *node = GraphNode_new(data, graph->dataSize);
+    HashMap_set(graph->nodes, key, node);
 }
 
 void Graph_remove(Graph *graph, void *key) {
@@ -59,8 +61,12 @@ void Graph_connect(Graph *graph, void *srcKey, void *destKey, float weight) {
     Edge *edge = Edge_new(destNode, weight);
     
     GraphNode *srcNode = (GraphNode*)HashMap_find(graph->nodes, srcKey);
-    if (destNode == NULL) {
+    if (srcNode == NULL) {
         printf("ERROR: Attempted to connect from data that doesn't exist\n");
+        exit(EXIT_FAILURE);
+    }
+    if (DynArr_contains(srcNode->edges, edge) == true) {
+        printf("ERROR: Attempted to connect data that is already connected\n");
         exit(EXIT_FAILURE);
     }
     DynArr_append(srcNode->edges, edge);
@@ -92,4 +98,30 @@ void Graph_disconnect(Graph *graph, void *srcKey, void *destKey) {
         exit(EXIT_FAILURE);
     }
     DynArr_remove(srcNode->edges, index);
+}
+
+void *Graph_find(Graph *graph, void *key) {
+    GraphNode *node = (GraphNode*)HashMap_find(graph->nodes, key);
+    return node->data;
+}
+
+int Graph_isConnected(Graph *graph, void *srcKey, void *destKey) {
+    GraphNode *srcNode = Graph_find(graph, srcKey);
+    if (srcNode == NULL) {
+        printf("ERROR: Source key does not exist in graph\n");
+        exit(EXIT_FAILURE);
+    }
+    GraphNode *destNode = Graph_find(graph, destKey);
+    if (destNode == NULL) {
+        printf("ERROR: Destination key does not exist in graph\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < DynArr_len(srcNode->edges); i++) {
+        Edge *currentEdge = DynArr_at(srcNode->edges, i);
+        if (currentEdge->dest == destNode) {
+            return true;
+        }
+    }
+    return false;
 }

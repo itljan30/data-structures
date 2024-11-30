@@ -96,7 +96,10 @@ void DynArr_remove(DynArr *arr, const size_t index) {
     arr->length--;
 }
 
-bool DynArr_contains(const DynArr *arr, const void *element) {
+int DynArr_contains(const DynArr *arr, const void *element) {
+    if (arr->length == 0) {
+        return false;
+    }
     for (int i = 0; i < arr->length; i++) {
         void *currentElement = *((void**)arr->elements + i);
         if (memcmp(currentElement, element, arr->elementSize) == 0) {

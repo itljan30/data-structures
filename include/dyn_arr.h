@@ -59,7 +59,7 @@ void DynArr_remove(DynArr *arr, const size_t index);
 /**
  * Returns true if the given dynamic array has the given element, else returns false.
  */
-bool DynArr_contains(const DynArr *arr, const void *element);
+int DynArr_contains(const DynArr *arr, const void *element);
 
 /**
  * Returns the length of the given dynamic array.

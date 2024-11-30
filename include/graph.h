@@ -41,4 +41,8 @@ void Graph_connect(Graph *graph, void *srcKey, void *destKey, float weight);
 
 void Graph_disconnect(Graph *graph, void *srcKey, void *destKey);
 
+void *Graph_find(Graph *graph, void *key);
+
+int Graph_isConnected(Graph *graph, void *srcKey, void *destKey);
+
 #endif
