@@ -250,7 +250,7 @@ void HashMap_remove(HashMap *map, void *key) {
         if (currentNode != NULL) {
             KeyValue *pair = (KeyValue*)currentNode->data;
             int comparison = (pair->keyCompare != NULL) ? pair->keyCompare(key, pair->key)
-                                                            : defaultCompare(key, pair->key, map->keySize);
+                                                        : defaultCompare(key, pair->key, map->keySize);
             if (comparison == 0) {
                 LinkedList_remove(list, i);
                 map->length--;

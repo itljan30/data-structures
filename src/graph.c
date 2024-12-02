@@ -1,6 +1,7 @@
 #include "graph.h"
 #include "hash_map.h"
 #include "dyn_arr.h"
+#include "linked_list.h"
 
 #include <stdio.h>
 
@@ -39,6 +40,32 @@ Graph *Graph_new(size_t keySize, size_t dataSize, CompareFunc keyCompare, Compar
 }
 
 void Graph_free(Graph *graph) {
+    // I really need to get custom destroy functions to work
+    // That way I can call something like 
+    // `HashMap_destroy(graph->nodes, GraphNode_destroy(Edge_free));`
+    // if I can even nest them like that lol
+
+    DynArr *map = graph->nodes->map;
+    for (int i = 0; i < map->capacity; i++) {
+        if (DynArr_at(map, i) == NULL) {
+            continue;
+        }
+        LinkedList *list = DynArr_at(map, i);
+        ListNode *currentNode = list->firstNode;
+        while (currentNode != NULL) {
+            KeyValue *pair = currentNode->data;
+            GraphNode *node = pair->value;
+            DynArr *arr = node->edges;
+
+            for (int i = 0; i < arr->length; i++) {
+                Edge_free(DynArr_at(arr, i));
+            }
+
+            GraphNode_free(node);
+            currentNode = currentNode->nextNode;
+        }
+    }
+
     HashMap_free(graph->nodes);
     free(graph);
 }
@@ -49,6 +76,8 @@ void Graph_add(Graph *graph, void *key, void *data) {
 }
 
 void Graph_remove(Graph *graph, void *key) {
+    GraphNode *node = HashMap_find(graph->nodes, key);
+    GraphNode_free(node);
     HashMap_remove(graph->nodes, key);
 }
 
@@ -102,16 +131,17 @@ void Graph_disconnect(Graph *graph, void *srcKey, void *destKey) {
 
 void *Graph_find(Graph *graph, void *key) {
     GraphNode *node = (GraphNode*)HashMap_find(graph->nodes, key);
-    return node->data;
+    void *data = node->data;
+    return data;
 }
 
 int Graph_isConnected(Graph *graph, void *srcKey, void *destKey) {
-    GraphNode *srcNode = Graph_find(graph, srcKey);
+    GraphNode *srcNode = HashMap_find(graph->nodes, srcKey);
     if (srcNode == NULL) {
         printf("ERROR: Source key does not exist in graph\n");
         exit(EXIT_FAILURE);
     }
-    GraphNode *destNode = Graph_find(graph, destKey);
+    GraphNode *destNode = HashMap_find(graph->nodes, destKey);
     if (destNode == NULL) {
         printf("ERROR: Destination key does not exist in graph\n");
         exit(EXIT_FAILURE);
