@@ -77,6 +77,9 @@ void Graph_add(Graph *graph, void *key, void *data) {
 
 void Graph_remove(Graph *graph, void *key) {
     GraphNode *node = HashMap_find(graph->nodes, key);
+    for (int i = 0; i < node->edges->length; i++) {
+        Edge_free(DynArr_at(node->edges, i));
+    }
     GraphNode_free(node);
     HashMap_remove(graph->nodes, key);
 }
