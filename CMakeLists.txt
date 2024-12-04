@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(DataStructures)
 
-add_library(DataStructures SHARED
+add_library(DataStructures STATIC
     src/binary_tree.c
     src/dyn_arr.c
     src/hash_map.c
