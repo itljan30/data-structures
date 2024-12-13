@@ -1,4 +1,5 @@
 #include "hash_map.h"
+#include "test_struct.h"
 
 #include <assert.h>
 
@@ -78,7 +79,19 @@ void remove() {
     assert(map->length == 999);
 
     HashMap_free(map);
+}
 
+void destroy() {
+    double keyBuffer[1000];
+    for (int i = 0; i < 1000; i++) {
+        keyBuffer[i] = (double)i;
+    }
+    HashMap *map = HashMap_new(sizeof(double), sizeof(float), NULL);
+    for (int i = 0; i < 1000; i++) {
+        HashMap_set(map, &keyBuffer[i], TestStruct_new());
+    }
+
+    HashMap_destroy(map, NULL, TestStruct_free);
 }
 
 int main(void) {
@@ -86,4 +99,5 @@ int main(void) {
     set1000();
     set1000Unique();
     remove();
+    destroy();
 }

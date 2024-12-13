@@ -11,7 +11,6 @@ typedef struct {
     size_t capacity;
     size_t length;
     size_t elementSize;
-    FreeFunc freeFunc;
 } DynArr;
 
 /**
@@ -79,5 +78,7 @@ void *DynArr_resizeNoCopy(DynArr *arr);
 size_t DynArr_capacity(DynArr *arr);
 
 void DynArr_set(DynArr *arr, size_t index, void *element);
+
+void DynArr_destroy(DynArr *arr, FreeFunc freeFunc);
 
 #endif

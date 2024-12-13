@@ -149,6 +149,18 @@ KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompare) {
 }
 
 void KeyValue_free(KeyValue *pair) {
+    KeyValue_destroy(pair, NULL, NULL);
+}
+
+void KeyValue_destroy(KeyValue *pair, FreeFunc freeKey, FreeFunc freeValue) {
+    if (freeKey != NULL) {
+        freeKey(pair->key);
+    }
+    
+    if (freeValue != NULL) {
+        freeValue(pair->value);
+    }
+
     free(pair);
 }
 
@@ -166,20 +178,7 @@ HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompare) {
 }
 
 void HashMap_free(HashMap *map) {
-    for (int i = 0; i < DynArr_capacity(map->map); i++) {
-        LinkedList *list = DynArr_at(map->map, i);
-        if (list != NULL) {
-            ListNode *currentNode = list->firstNode;
-            while (currentNode != NULL) {
-                KeyValue_free(currentNode->data);
-
-                currentNode = currentNode->nextNode;
-            }
-            LinkedList_free(list);
-        }
-    }
-    DynArr_free(map->map);
-    free(map);
+    HashMap_destroy(map, NULL, NULL);
 }
 
 void *HashMap_find(HashMap *map, void *key) {
@@ -261,4 +260,20 @@ void HashMap_remove(HashMap *map, void *key) {
         i++;
         currentNode = currentNode->nextNode;
     }
+}
+
+void HashMap_destroy(HashMap *map, FreeFunc freeKey, FreeFunc freeValue) {
+    for (int i = 0; i < DynArr_capacity(map->map); i++) {
+        LinkedList *list = DynArr_at(map->map, i);
+        if (list != NULL) {
+            ListNode *currentNode = list->firstNode;
+            while (currentNode != NULL) {
+                KeyValue_destroy(currentNode->data, freeKey, freeValue);
+                currentNode = currentNode->nextNode;
+            }
+            LinkedList_free(list);
+        }
+    }
+    DynArr_free(map->map);
+    free(map);
 }

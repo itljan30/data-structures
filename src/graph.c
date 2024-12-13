@@ -14,6 +14,13 @@ GraphNode *GraphNode_new(void *data, size_t dataSize) {
 }
 
 void GraphNode_free(GraphNode *node) {
+    GraphNode_destroy(node, NULL);
+}
+
+void GraphNode_destroy(GraphNode *node, FreeFunc freeFunc) {
+    if (freeFunc != NULL) {
+        freeFunc(node->data);
+    }
     DynArr_free(node->edges);
     free(node);
 }
@@ -37,37 +44,6 @@ Graph *Graph_new(size_t keySize, size_t dataSize, CompareFunc keyCompare, Compar
     graph->valueCompare = valueCompare;
 
     return graph;
-}
-
-void Graph_free(Graph *graph) {
-    // I really need to get custom destroy functions to work
-    // That way I can call something like 
-    // `HashMap_destroy(graph->nodes, GraphNode_destroy(Edge_free));`
-    // if I can even nest them like that lol
-
-    DynArr *map = graph->nodes->map;
-    for (int i = 0; i < map->capacity; i++) {
-        if (DynArr_at(map, i) == NULL) {
-            continue;
-        }
-        LinkedList *list = DynArr_at(map, i);
-        ListNode *currentNode = list->firstNode;
-        while (currentNode != NULL) {
-            KeyValue *pair = currentNode->data;
-            GraphNode *node = pair->value;
-            DynArr *arr = node->edges;
-
-            for (int i = 0; i < arr->length; i++) {
-                Edge_free(DynArr_at(arr, i));
-            }
-
-            GraphNode_free(node);
-            currentNode = currentNode->nextNode;
-        }
-    }
-
-    HashMap_free(graph->nodes);
-    free(graph);
 }
 
 void Graph_add(Graph *graph, void *key, void *data) {
@@ -157,4 +133,36 @@ int Graph_isConnected(Graph *graph, void *srcKey, void *destKey) {
         }
     }
     return false;
+}
+
+void Graph_free(Graph *graph) {
+    Graph_destroy(graph, NULL, NULL);
+}
+
+void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue) {
+    DynArr *map = graph->nodes->map;
+    for (int i = 0; i < map->capacity; i++) {
+        if (DynArr_at(map, i) == NULL) {
+            continue;
+        }
+        LinkedList *list = DynArr_at(map, i);
+        ListNode *currentNode = list->firstNode;
+        while (currentNode != NULL) {
+            ListNode *nextNode = currentNode->nextNode;
+
+            KeyValue *pair = currentNode->data;
+            GraphNode *node = pair->value;
+            DynArr *arr = node->edges;
+
+            for (int i = 0; i < arr->length; i++) {
+                Edge_free(DynArr_at(arr, i));
+            }
+
+            GraphNode_destroy(node, freeValue);
+            currentNode = nextNode;
+        }
+    }
+
+    HashMap_destroy(graph->nodes, freeKey, NULL);
+    free(graph);
 }

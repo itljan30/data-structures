@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <callbacks.h>
 
 ListNode *ListNode_new(void *data, ListNode *nextNode) {
     ListNode *node = (ListNode *)malloc(sizeof(ListNode));
@@ -17,11 +18,15 @@ ListNode *ListNode_new(void *data, ListNode *nextNode) {
     return node;
 }
 
-void ListNode_destroy(ListNode *node) {
-    // TODO frees all data it points to as well
+void ListNode_free(ListNode *node) {
+    ListNode_destroy(node, NULL);
 }
 
-void ListNode_free(ListNode *node) {
+void ListNode_destroy(ListNode *node, FreeFunc freeFunc) {
+    if (freeFunc != NULL) {
+        freeFunc(node->data);
+    }
+
     free(node);
 }
 
@@ -34,22 +39,7 @@ LinkedList *LinkedList_new(const size_t elementSize) {
 }
 
 void LinkedList_free(LinkedList *list) {
-    if (list->firstNode == NULL) {
-        free(list);
-        return;
-    }
-    ListNode *currentNode = list->firstNode;
-    ListNode *nextNode = NULL;
-    while (true) {
-        if (currentNode->nextNode == NULL) {
-            ListNode_free(currentNode);
-            break;
-        }
-        nextNode = currentNode->nextNode;
-        ListNode_free(currentNode);
-        currentNode = nextNode;
-    }
-    free(list);
+    LinkedList_destroy(list, NULL);
 }
 
 void LinkedList_append(LinkedList *list, void *element) {
@@ -158,7 +148,7 @@ void *LinkedList_at(LinkedList *list, size_t index) {
     return currentNode->data;
 }
 
-bool LinkedList_contains(LinkedList *list, void *element) {
+int LinkedList_contains(LinkedList *list, void *element) {
     ListNode *currentNode = list->firstNode;
     if (memcmp(currentNode->data, element, list->elementSize) == 0) {
         return true;
@@ -170,4 +160,17 @@ bool LinkedList_contains(LinkedList *list, void *element) {
         }
     }
     return false;
+}
+
+void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc) {
+    if (list->firstNode != NULL) {
+        ListNode *currentNode = list->firstNode;
+        while (currentNode != NULL) {
+            ListNode *nextNode = currentNode->nextNode;
+            ListNode_destroy(currentNode, freeFunc);
+            currentNode = nextNode;
+        }
+    }
+
+    free(list);
 }

@@ -18,6 +18,8 @@ KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompare);
 
 void KeyValue_free(KeyValue *pair);
 
+void KeyValue_destroy(KeyValue *pair, FreeFunc freeKey, FreeFunc freeValue);
+
 typedef struct {
     // a DynArr of LinkedList whose data is KeyValuePair
     DynArr *map;
@@ -73,6 +75,8 @@ void *HashMap_find(HashMap *map, void *key);
  * Removes the given key from the given HashMap.
  */
 void HashMap_remove(HashMap *map, void *key);
+
+void HashMap_destroy(HashMap *map, FreeFunc freeKey, FreeFunc freeValue);
 
 // TODO void HashMap_removeAndFree(HashMap *map, void *key, FreeFunc freeFunc);
 

@@ -14,6 +14,8 @@ GraphNode *GraphNode_new(void *data, size_t dataSize);
 
 void GraphNode_free(GraphNode *node);
 
+void GraphNode_destroy(GraphNode *node, FreeFunc freeFunc);
+
 typedef struct {
     GraphNode *dest;
     float weight;
@@ -44,5 +46,7 @@ void Graph_disconnect(Graph *graph, void *srcKey, void *destKey);
 void *Graph_find(Graph *graph, void *key);
 
 int Graph_isConnected(Graph *graph, void *srcKey, void *destKey);
+
+void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue);
 
 #endif

@@ -38,10 +38,7 @@ DynArr *DynArr_new(size_t elementSize) {
 }
 
 void DynArr_free(DynArr *arr) {
-    if (arr->elements != NULL) {
-        free(arr->elements);
-    }
-    free(arr);
+    DynArr_destroy(arr, NULL);
 }
 
 void DynArr_pop(DynArr *arr) {
@@ -138,4 +135,15 @@ size_t DynArr_capacity(DynArr *arr) {
 
 void DynArr_set(DynArr *arr, size_t index, void *element) {
     *((void**)arr->elements + index) = element;
+}
+
+void DynArr_destroy(DynArr *arr, FreeFunc freeFunc) {
+    if (freeFunc != NULL) {
+        for (int i = 0; i < arr->length; i++) {
+            freeFunc(DynArr_at(arr, i));
+        }
+    }
+
+    free(arr->elements);
+    free(arr);
 }

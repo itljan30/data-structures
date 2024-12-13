@@ -1,4 +1,5 @@
 #include "linked_list.h"
+#include "test_struct.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -122,6 +123,16 @@ void contains() {
     LinkedList_free(list);
 }
 
+void destroy() {
+    LinkedList *list = LinkedList_new(sizeof(TestStruct));
+    for (int i = 0; i < 100; i++) {
+        TestStruct *testStruct = TestStruct_new();
+        LinkedList_prepend(list, testStruct);
+    }
+
+    LinkedList_destroy(list, TestStruct_free);
+}
+
 int main(void) {
     firstAppend();
     firstPrepend();
@@ -130,4 +141,5 @@ int main(void) {
     insert();
     remove();
     contains();
+    destroy();
 }

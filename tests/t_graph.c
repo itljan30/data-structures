@@ -1,4 +1,5 @@
 #include "graph.h"
+#include "test_struct.h"
 
 #include <assert.h>
 
@@ -81,8 +82,28 @@ void disconnect() {
     Graph_free(graph);
 }
 
+void destroy() {
+    Graph *graph = Graph_new(sizeof(int), sizeof(char), NULL, NULL);
+
+    int keyBuffer[10000];
+    for (int i = 0; i < 10000; i++) {
+        keyBuffer[i] = i;
+    }
+
+    for (int i = 0; i < 10000; i++) {
+        Graph_add(graph, &keyBuffer[i], TestStruct_new());
+    }
+
+    for (int i = 0; i < 9999; i++) {
+        Graph_connect(graph, &keyBuffer[i], &keyBuffer[i + 1], 1.5);
+    }
+
+    Graph_destroy(graph, NULL, TestStruct_free);
+}
+
 int main () {
     add();
     connect();
     disconnect();
+    destroy();
 }

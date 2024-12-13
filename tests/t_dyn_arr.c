@@ -121,7 +121,17 @@ void remove() {
     DynArr_free(arr);
 }
 
-int main(void) {
+void destroy() {
+    DynArr *arr = DynArr_new(sizeof(TestStruct));
+    for (int i = 0; i < 100; i++) {
+        TestStruct *testStruct = TestStruct_new();
+        DynArr_append(arr, testStruct);
+    }
+
+    DynArr_destroy(arr, TestStruct_free);
+}
+
+int main() {
     append();
     at();
     contains();
@@ -131,4 +141,5 @@ int main(void) {
     insert();
     remove();
     customStructs();
+    destroy();
 }

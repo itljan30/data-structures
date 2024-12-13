@@ -9,7 +9,6 @@
 typedef struct ListNode {
     void *data;
     struct ListNode *nextNode;
-    FreeFunc freeFunc;
 } ListNode;
 
 /**
@@ -25,6 +24,8 @@ ListNode *ListNode_new(void *data, ListNode *nextNode);
  * @param node is assumed to be a ListNode *.
  */
 void ListNode_free(ListNode *node);
+
+void ListNode_destroy(ListNode *node, FreeFunc freeFunc);
 
 typedef struct {
     ListNode *firstNode;
@@ -84,7 +85,9 @@ void *LinkedList_at(LinkedList *list, size_t index);
 /**
  * Returns true if the given element is in the given list, else it returns false.
  */
-bool LinkedList_contains(LinkedList *list, void *element);
+int LinkedList_contains(LinkedList *list, void *element);
+
+void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc);
 
 // TODO LinkedList_find
 
