@@ -30,9 +30,8 @@ void ListNode_destroy(ListNode *node, FreeFunc freeFunc) {
     free(node);
 }
 
-LinkedList *LinkedList_new(const size_t elementSize) {
+LinkedList *LinkedList_new() {
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
-    list->elementSize = elementSize;
     list->firstNode = NULL;
     list->length = 0;
     return list;
@@ -148,14 +147,14 @@ void *LinkedList_at(LinkedList *list, size_t index) {
     return currentNode->data;
 }
 
-int LinkedList_contains(LinkedList *list, void *element) {
+int LinkedList_contains(LinkedList *list, void *element, CompareFunc compareFunc) {
     ListNode *currentNode = list->firstNode;
-    if (memcmp(currentNode->data, element, list->elementSize) == 0) {
+    if (compareFunc(currentNode->data, element) == 0) {
         return true;
     }
     while (currentNode->nextNode != NULL) {
         currentNode = currentNode->nextNode;
-        if (memcmp(currentNode->data, element, list->elementSize) == 0) {
+        if (compareFunc(currentNode->data, element) == 0) {
             return true;
         }
     }

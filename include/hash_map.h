@@ -7,14 +7,13 @@
 typedef struct {
     void *key;
     void *value;
-    CompareFunc keyCompare;
 } KeyValue;
 
 /**
  * Returns a pointer to a KeyValue pair with the given key and value.
  * WARNING: Make sure to call `KeyValue_free()` to avoid memory leaks.
  */
-KeyValue *KeyValue_new(void *key, void *value, CompareFunc keyCompare);
+KeyValue *KeyValue_new(void *key, void *value);
 
 void KeyValue_free(KeyValue *pair);
 
@@ -25,9 +24,8 @@ typedef struct {
     DynArr *map;
     size_t usedBuckets;
     size_t length;
-    size_t keySize;
-    size_t valueSize;
     size_t loadFactor;
+    size_t keySize;
     CompareFunc keyCompare;
 } HashMap;
 
@@ -52,7 +50,7 @@ typedef struct {
  *                 }
  *                 ```
  */
-HashMap *HashMap_new(size_t keySize, size_t valueSize, CompareFunc keyCompare);
+HashMap *HashMap_new(size_t keySize, CompareFunc keyCompare);
 
 /**
  * Frees all memory allocated to the given HashMap.

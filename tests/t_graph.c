@@ -3,8 +3,12 @@
 
 #include <assert.h>
 
+int compareInts(void *data1, void *data2) {
+    return *(int*)data1 - *(int*)data2;
+}
+
 void add() {
-    Graph *graph = Graph_new(sizeof(int), sizeof(char), NULL, NULL);
+    Graph *graph = Graph_new(sizeof(int), compareInts);
 
     int keyBuffer[100];
     char valueBuffer[100];
@@ -25,7 +29,7 @@ void add() {
 }
 
 void connect() {
-    Graph *graph = Graph_new(sizeof(int), sizeof(char), NULL, NULL);
+    Graph *graph = Graph_new(sizeof(int), compareInts);
 
     int keyBuffer[10000];
     char valueBuffer[10000];
@@ -52,7 +56,7 @@ void connect() {
     Graph_free(graph);
 }
 void disconnect() {
-    Graph *graph = Graph_new(sizeof(int), sizeof(char), NULL, NULL);
+    Graph *graph = Graph_new(sizeof(int), compareInts);
 
     int keyBuffer[10000];
     char valueBuffer[10000];
@@ -83,7 +87,7 @@ void disconnect() {
 }
 
 void destroy() {
-    Graph *graph = Graph_new(sizeof(int), sizeof(char), NULL, NULL);
+    Graph *graph = Graph_new(sizeof(int), compareInts);
 
     int keyBuffer[10000];
     for (int i = 0; i < 10000; i++) {

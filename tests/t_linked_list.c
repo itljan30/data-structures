@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 void firstAppend() {
-    LinkedList *list = LinkedList_new(sizeof(long));
+    LinkedList *list = LinkedList_new();
     long value = 100;
     LinkedList_append(list, &value);
 
@@ -17,7 +17,7 @@ void firstAppend() {
 }
 
 void firstPrepend() {
-    LinkedList *list = LinkedList_new(sizeof(char));
+    LinkedList *list = LinkedList_new();
     char value = 'x';
     LinkedList_prepend(list, &value);
 
@@ -29,7 +29,7 @@ void firstPrepend() {
 }
 
 void append() {
-    LinkedList *list = LinkedList_new(sizeof(double));
+    LinkedList *list = LinkedList_new();
     double buffer[1000];
     for (double i = 0; i < 1000; i++) {
         buffer[(int)i] = i;
@@ -46,7 +46,7 @@ void append() {
 }
 
 void prepend() {
-    LinkedList *list = LinkedList_new(sizeof(float));
+    LinkedList *list = LinkedList_new();
     float buffer[1000];
     for (float i = 0; i < 1000; i++) {
         buffer[(int)i] = i;
@@ -63,7 +63,7 @@ void prepend() {
 }
 
 void insert() {
-    LinkedList *list = LinkedList_new(sizeof(int));
+    LinkedList *list = LinkedList_new();
     int buffer[100];
     for (int i = 0; i < 100; i++) {
         buffer[i] = i;
@@ -84,7 +84,7 @@ void insert() {
 }
 
 void remove() {
-    LinkedList *list = LinkedList_new(sizeof(int));
+    LinkedList *list = LinkedList_new();
     int buffer[100];
     for (int i = 0; i < 100; i++) {
         buffer[i] = i;
@@ -103,8 +103,12 @@ void remove() {
     LinkedList_free(list);
 }
 
+int compareInt(void *data1, void *data2) {
+    return *(int*)data1 - *(int*)data2;
+}
+
 void contains() {
-    LinkedList *list = LinkedList_new(sizeof(int));
+    LinkedList *list = LinkedList_new();
     int buffer[100];
     for (int i = 0; i < 100; i++) {
         buffer[i] = i;
@@ -116,15 +120,15 @@ void contains() {
     int value = 10;
     int secondValue = 99;
     int thirdValue = 100;
-    assert(LinkedList_contains(list, &value) == true);
-    assert(LinkedList_contains(list, &secondValue) == true);
-    assert(LinkedList_contains(list, &thirdValue) == false);
+    assert(LinkedList_contains(list, &value, compareInt) == true);
+    assert(LinkedList_contains(list, &secondValue, compareInt) == true);
+    assert(LinkedList_contains(list, &thirdValue, compareInt) == false);
 
     LinkedList_free(list);
 }
 
 void destroy() {
-    LinkedList *list = LinkedList_new(sizeof(TestStruct));
+    LinkedList *list = LinkedList_new();
     for (int i = 0; i < 100; i++) {
         TestStruct *testStruct = TestStruct_new();
         LinkedList_prepend(list, testStruct);

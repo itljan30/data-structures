@@ -116,9 +116,8 @@ static void replaceWithSuccessor(BinaryTree *tree, TreeNode *replacedNode, TreeN
     TreeNode_free(replacedNode);
 }
 
-BinaryTree *BinaryTree_new(size_t elementSize, CompareFunc compareFunc) {
+BinaryTree *BinaryTree_new(CompareFunc compareFunc) {
     BinaryTree *tree = (BinaryTree *)malloc(sizeof(BinaryTree));
-    tree->elementSize = elementSize;
     tree->compareFunc = compareFunc;
     tree->root = NULL;
     tree->size = 0;
@@ -140,8 +139,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element) {
 
     TreeNode *currentNode = tree->root;
     while (true) {
-        int comparison = tree->compareFunc ? tree->compareFunc(element, currentNode->data)
-                                           : defaultCompare(element, currentNode->data, tree->elementSize);
+        int comparison = tree->compareFunc(element, currentNode->data);
 
         if (comparison < 0) {
             if (currentNode->left == NULL) {
@@ -165,8 +163,7 @@ void BinaryTree_insert(BinaryTree *tree, void *element) {
 void *BinaryTree_search(BinaryTree *tree, void *element) {
     TreeNode *currentNode = tree->root;
     while (currentNode != NULL) {
-        int comparison = tree->compareFunc ? tree->compareFunc(element, currentNode->data)
-                                           : defaultCompare(element, currentNode->data, tree->elementSize);
+        int comparison = tree->compareFunc(element, currentNode->data);
 
         if (comparison < 0) {
             currentNode = currentNode->left;
@@ -190,8 +187,7 @@ int BinaryTree_delete(BinaryTree *tree, void *element) {
     TreeNode *prevNode = NULL;
     TreeNode *currentNode = tree->root;
     while (currentNode != NULL) {
-        int comparison = tree->compareFunc ? tree->compareFunc(element, currentNode->data)
-                                           : defaultCompare(element, currentNode->data, tree->elementSize);
+        int comparison = tree->compareFunc(element, currentNode->data);
 
         if (comparison < 0) {
             direction = LEFT;

@@ -5,10 +5,17 @@
 
 #include <stdio.h>
 
-GraphNode *GraphNode_new(void *data, size_t dataSize) {
+static int Edge_compare(void *edge1, void *edge2) {
+    Edge *e1 = (Edge*)edge1;
+    Edge *e2 = (Edge*)edge2;
+
+    return e1->dest - e2->dest;
+}
+
+GraphNode *GraphNode_new(void *data) {
     GraphNode *node = (GraphNode*)malloc(sizeof(GraphNode));
     node->data = data;
-    node->edges = DynArr_new(sizeof(Edge));
+    node->edges = DynArr_new();
 
     return node;
 }
@@ -37,17 +44,15 @@ void Edge_free(Edge *edge) {
     free(edge);
 }
 
-Graph *Graph_new(size_t keySize, size_t dataSize, CompareFunc keyCompare, CompareFunc valueCompare) {
+Graph *Graph_new(size_t keySize, CompareFunc keyCompare) {
     Graph *graph = (Graph*)malloc(sizeof(Graph));
-    graph->nodes = HashMap_new(keySize, sizeof(GraphNode), keyCompare);
-    graph->dataSize = dataSize;
-    graph->valueCompare = valueCompare;
+    graph->nodes = HashMap_new(keySize, keyCompare);
 
     return graph;
 }
 
 void Graph_add(Graph *graph, void *key, void *data) {
-    GraphNode *node = GraphNode_new(data, graph->dataSize);
+    GraphNode *node = GraphNode_new(data);
     HashMap_set(graph->nodes, key, node);
 }
 
@@ -73,7 +78,7 @@ void Graph_connect(Graph *graph, void *srcKey, void *destKey, float weight) {
         printf("ERROR: Attempted to connect from data that doesn't exist\n");
         exit(EXIT_FAILURE);
     }
-    if (DynArr_contains(srcNode->edges, edge) == true) {
+    if (DynArr_contains(srcNode->edges, edge, Edge_compare) == true) {
         printf("ERROR: Attempted to connect data that is already connected\n");
         exit(EXIT_FAILURE);
     }

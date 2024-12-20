@@ -10,7 +10,6 @@ typedef struct {
     void *elements;
     size_t capacity;
     size_t length;
-    size_t elementSize;
 } DynArr;
 
 /**
@@ -18,7 +17,7 @@ typedef struct {
  * Example usage: `DynArr *arr = DynArr_new(sizeof(int));` .
  * WARNING: Be sure to call DynArr_free() to avoid memory leaks.
  */
-DynArr *DynArr_new(const size_t elementSize);
+DynArr *DynArr_new();
 
 /**
  * Frees the memory allocated to the given array.
@@ -58,7 +57,7 @@ void DynArr_remove(DynArr *arr, const size_t index);
 /**
  * Returns true if the given dynamic array has the given element, else returns false.
  */
-int DynArr_contains(const DynArr *arr, const void *element);
+int DynArr_contains(const DynArr *arr, void *element, CompareFunc compareFunc);
 
 /**
  * Returns the length of the given dynamic array.

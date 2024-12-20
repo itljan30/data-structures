@@ -27,12 +27,11 @@ static void resize(DynArr *arr) {
     arr->elements = newArray;
 }
 
-DynArr *DynArr_new(size_t elementSize) {
+DynArr *DynArr_new() {
     DynArr *arr = malloc(sizeof(DynArr));
     arr->elements = NULL;
     arr->capacity = 0;
     arr->length = 0;
-    arr->elementSize = elementSize;
 
     return arr;
 }
@@ -93,13 +92,13 @@ void DynArr_remove(DynArr *arr, const size_t index) {
     arr->length--;
 }
 
-int DynArr_contains(const DynArr *arr, const void *element) {
+int DynArr_contains(const DynArr *arr, void *element, CompareFunc compareFunc) {
     if (arr->length == 0) {
         return false;
     }
     for (int i = 0; i < arr->length; i++) {
         void *currentElement = *((void**)arr->elements + i);
-        if (memcmp(currentElement, element, arr->elementSize) == 0) {
+        if (compareFunc(currentElement, element) == 0) {
             return true;
         }
     }

@@ -3,8 +3,12 @@
 #include <assert.h>
 #include <stddef.h>
 
+int compareInt(void *data1, void *data2) {
+    return *(int*)data1 - *(int*)data2;
+}
+
 void insert() {
-    BinaryTree *tree = BinaryTree_new(sizeof(int), NULL);
+    BinaryTree *tree = BinaryTree_new(compareInt);
 
     int value = 3;
     BinaryTree_insert(tree, &value);
@@ -19,27 +23,27 @@ void insert() {
 }
 
 void search() {
-    BinaryTree *tree = BinaryTree_new(sizeof(float), NULL);
+    BinaryTree *tree = BinaryTree_new(compareInt);
 
-    float value = 420;
+    int value = 420;
     BinaryTree_insert(tree, &value);
-    float otherValue = 1000;
+    int otherValue = 1000;
     BinaryTree_insert(tree, &otherValue);
-    float anotherValue = 5;
+    int anotherValue = 5;
     BinaryTree_insert(tree, &anotherValue);
 
-    float *result = (float *)BinaryTree_search(tree, &value);
+    int *result = (int *)BinaryTree_search(tree, &value);
     assert(result != NULL);
 
-    float randomNum = 69;
-    float *otherResult = (float *)BinaryTree_search(tree, &randomNum);
+    int randomNum = 69;
+    int *otherResult = (int *)BinaryTree_search(tree, &randomNum);
     assert(otherResult == NULL);
 
     BinaryTree_free(tree);
 }
 
 void delete() {
-    BinaryTree *tree = BinaryTree_new(sizeof(int), NULL);
+    BinaryTree *tree = BinaryTree_new(compareInt);
 
     /*   
      *  resulting tree
@@ -132,5 +136,5 @@ void delete() {
 int main(void) {
     insert();
     search();
-    /* delete(); */ // TODO finish this test
+    /* delete(); */ // TODO finish test
 }

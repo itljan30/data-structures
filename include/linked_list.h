@@ -30,8 +30,6 @@ void ListNode_destroy(ListNode *node, FreeFunc freeFunc);
 typedef struct {
     ListNode *firstNode;
     size_t length;
-    size_t elementSize;
-    FreeFunc freeFunc;
 } LinkedList;
 
 /**
@@ -40,7 +38,7 @@ typedef struct {
  * `LinkedList *list = LinkedList_new(sizeof(int));`.
  * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
  */
-LinkedList *LinkedList_new(const size_t elementSize);
+LinkedList *LinkedList_new();
 
 /**
  * Frees the memory allocated to the LinkedList.
@@ -85,7 +83,7 @@ void *LinkedList_at(LinkedList *list, size_t index);
 /**
  * Returns true if the given element is in the given list, else it returns false.
  */
-int LinkedList_contains(LinkedList *list, void *element);
+int LinkedList_contains(LinkedList *list, void *element, CompareFunc compareFunc);
 
 void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc);
 

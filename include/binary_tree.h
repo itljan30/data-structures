@@ -3,6 +3,8 @@
 
 #include "callbacks.h"
 
+#include <stdlib.h>
+
 typedef struct TreeNode {
     void *data;
     struct TreeNode *left;
@@ -27,7 +29,6 @@ void TreeNode_free(TreeNode *node);
 typedef struct {
     TreeNode *root;
     CompareFunc compareFunc;
-    size_t elementSize;
     size_t size;
     FreeFunc freeFunc;
 } BinaryTree;
@@ -42,7 +43,7 @@ typedef struct {
  *                    It should return a negative int if `a < b`, 0 if `a == b`, and a positive int if `a > b`.
  *                    If `compareFunc == NULL`, it will compare values byte by byte.
  */
-BinaryTree *BinaryTree_new(size_t elementSize, CompareFunc compareFunc);
+BinaryTree *BinaryTree_new(CompareFunc compareFunc);
 
 /**
  * Inserts the given element into the given tree using the given compare function,

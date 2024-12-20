@@ -6,7 +6,6 @@ add_library(DataStructures STATIC
     src/dyn_arr.c
     src/hash_map.c
     src/linked_list.c
-    src/callbacks.c
     src/graph.c
 )
 target_include_directories(DataStructures PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
