@@ -171,3 +171,15 @@ void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue) {
     HashMap_destroy(graph->nodes, freeKey, NULL);
     free(graph);
 }
+
+DynArr *Graph_getVertices(Graph *graph) {
+
+}
+
+DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey) {
+
+}
+
+DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey) {
+
+}

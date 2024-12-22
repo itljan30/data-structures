@@ -7,7 +7,10 @@ add_library(DataStructures STATIC
     src/hash_map.c
     src/linked_list.c
     src/graph.c
+    src/callbacks.c
+    src/iterator.c
 )
+
 target_include_directories(DataStructures PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND CMAKE_BUILD_TYPE STREQUAL "Debug")

@@ -1,10 +1,20 @@
 #include "linked_list.h"
+#include "iterator.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <callbacks.h>
+
+static void *LinkedList_next(Iterator *iter) {
+    ListNode *curNode = (ListNode*)iter->currentNode;
+    void *data = curNode->data;
+    iter->currentNode = curNode->nextNode;
+    iter->index++;
+
+    return data;
+}
 
 ListNode *ListNode_new(void *data, ListNode *nextNode) {
     ListNode *node = (ListNode *)malloc(sizeof(ListNode));
@@ -161,7 +171,8 @@ int LinkedList_contains(LinkedList *list, void *element, CompareFunc compareFunc
     return false;
 }
 
-void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc) {
+void LinkedList_destroy(void *data, FreeFunc freeFunc) {
+    LinkedList *list = (LinkedList*)data;
     if (list->firstNode != NULL) {
         ListNode *currentNode = list->firstNode;
         while (currentNode != NULL) {
@@ -172,4 +183,16 @@ void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc) {
     }
 
     free(list);
+}
+
+Iterator *LinkedList_iter(LinkedList *list) {
+    Iterator *iter = malloc(sizeof(Iterator));
+    iter->dataStruct = list;
+    iter->length = list->length;
+    iter->destroyFunc = LinkedList_destroy;
+    iter->index = 0;
+    iter->currentNode = list->firstNode;
+    iter->next = LinkedList_next;
+
+    return iter;
 }

@@ -1,9 +1,16 @@
 #include "dyn_arr.h"
+#include "iterator.h"
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+
+static void *DynArr_next(Iterator *iter) {
+    void *element = DynArr_at(iter->dataStruct, iter->index);
+    iter->index++;
+    return element;
+}
 
 static void resize(DynArr *arr) {
     if (arr->capacity == 0) {
@@ -26,6 +33,8 @@ static void resize(DynArr *arr) {
     free(arr->elements);
     arr->elements = newArray;
 }
+
+
 
 DynArr *DynArr_new() {
     DynArr *arr = malloc(sizeof(DynArr));
@@ -136,7 +145,9 @@ void DynArr_set(DynArr *arr, size_t index, void *element) {
     *((void**)arr->elements + index) = element;
 }
 
-void DynArr_destroy(DynArr *arr, FreeFunc freeFunc) {
+void DynArr_destroy(void *data, FreeFunc freeFunc) {
+    DynArr *arr = (DynArr*)data;
+
     if (freeFunc != NULL) {
         for (int i = 0; i < arr->length; i++) {
             freeFunc(DynArr_at(arr, i));
@@ -145,4 +156,16 @@ void DynArr_destroy(DynArr *arr, FreeFunc freeFunc) {
 
     free(arr->elements);
     free(arr);
+}
+
+Iterator *DynArr_iter(DynArr *arr) {
+    Iterator *iter = malloc(sizeof(Iterator));
+    iter->dataStruct = arr;
+    iter->destroyFunc = DynArr_destroy;
+    iter->length = arr->length;
+    iter->index = 0;
+    iter->next = DynArr_next;
+    iter->currentNode = NULL;
+
+    return iter;
 }

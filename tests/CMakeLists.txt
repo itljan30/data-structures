@@ -5,6 +5,7 @@ add_executable(LinkedListTest t_linked_list.c test_struct.c)
 add_executable(BinaryTreeTest t_binary_tree.c test_struct.c)
 add_executable(HashMapTest t_hash_map.c test_struct.c)
 add_executable(GraphTest t_graph.c test_struct.c)
+add_executable(IteratorTest t_iterator.c test_struct.c)
 
 set(TEST_EXECUTABLES 
     DynArrTest 
@@ -12,6 +13,7 @@ set(TEST_EXECUTABLES
     BinaryTreeTest
     HashMapTest
     GraphTest
+    IteratorTest
 )
 
 foreach(test_executable ${TEST_EXECUTABLES})

@@ -20,9 +20,6 @@ TreeNode *TreeNode_new(void *data, TreeNode *rightNode, TreeNode *leftNode);
 
 /**
  * Frees all memory allocated to the given node.
- * Uses `free()` if no custom free function was given.
- *
- * @param node is assumed to be a Node *.
  */
 void TreeNode_free(TreeNode *node);
 

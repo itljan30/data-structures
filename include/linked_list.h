@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "callbacks.h"
+#include "iterator.h"
 
 typedef struct ListNode {
     void *data;
@@ -19,12 +20,14 @@ ListNode *ListNode_new(void *data, ListNode *nextNode);
 
 /**
  * Frees the memory allocated to the node.
- * Uses `free()` if no custom free function was given.
- *
- * @param node is assumed to be a ListNode *.
+ * WARNING: Does not free the data stored inside.
  */
 void ListNode_free(ListNode *node);
 
+/**
+ * Frees the memory allocated to the node as well as all data stored within.
+ * NOTE: freeFunc must be in form `void freeFunc(void *element)`
+ */
 void ListNode_destroy(ListNode *node, FreeFunc freeFunc);
 
 typedef struct {
@@ -34,17 +37,14 @@ typedef struct {
 
 /**
  * Returns an empty linked list.
- * Example usage: 
- * `LinkedList *list = LinkedList_new(sizeof(int));`.
- * WARNING: Be sure to call LinkedList_free() to avoid memory leaks.
+ * Example usage: `LinkedList *list = LinkedList_new();`.
+ * WARNING: Be sure to call LinkedList_free() or LinkedList_destroy to avoid memory leaks.
  */
 LinkedList *LinkedList_new();
 
 /**
  * Frees the memory allocated to the LinkedList.
- * Uses `free()` if no custom free function was given during construction.
- *
- * @param list is assumed to be a LinkedList *.
+ * WARNING: Does not free memory of data stored within.
  */
 void LinkedList_free(LinkedList *list);
 
@@ -85,7 +85,13 @@ void *LinkedList_at(LinkedList *list, size_t index);
  */
 int LinkedList_contains(LinkedList *list, void *element, CompareFunc compareFunc);
 
-void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc);
+/**
+ * Frees the memory allocated to the LinkedList as well as all data stored within.
+ * NOTE: freeFunc must be in form `void freeFunc(void *element)`
+ */
+void LinkedList_destroy(void *list, FreeFunc freeFunc);
+
+Iterator *LinkedList_iter(LinkedList *list);
 
 // TODO LinkedList_find
 

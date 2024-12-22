@@ -49,4 +49,10 @@ int Graph_isConnected(Graph *graph, void *srcKey, void *destKey);
 
 void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue);
 
+DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey);
+
+DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey);
+
+DynArr *Graph_getVertices(Graph *graph);
+
 #endif

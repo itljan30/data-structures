@@ -2,6 +2,7 @@
 #define DYN_ARR_H
 
 #include "callbacks.h"
+#include "iterator.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -14,21 +15,18 @@ typedef struct {
 
 /**
  * Returns an empty dynamically sized array.
- * Example usage: `DynArr *arr = DynArr_new(sizeof(int));` .
- * WARNING: Be sure to call DynArr_free() to avoid memory leaks.
+ * WARNING: Be sure to call DynArr_free() or DynArr_destroy() to avoid memory leaks.
  */
 DynArr *DynArr_new();
 
 /**
  * Frees the memory allocated to the given array.
- * Uses `free()` if no custom free function was given during construction.
- *
- * @param arr is assumed to be a DynArr *.
+ * WARNING: Does not free memory for data stored within.
  */
 void DynArr_free(DynArr *arr);
 
 /**
- * Removes the final item from the dynamic array.
+ * Removes the final element from the dynamic array.
  */
 void DynArr_pop(DynArr *arr);
 
@@ -56,6 +54,7 @@ void DynArr_remove(DynArr *arr, const size_t index);
 
 /**
  * Returns true if the given dynamic array has the given element, else returns false.
+ * NOTE: compareFunc must be in form `int compareFunc(void *element1, void *element2)`
  */
 int DynArr_contains(const DynArr *arr, void *element, CompareFunc compareFunc);
 
@@ -63,8 +62,6 @@ int DynArr_contains(const DynArr *arr, void *element, CompareFunc compareFunc);
  * Returns the length of the given dynamic array.
  */
 size_t DynArr_len(const DynArr *arr);
-
-// TODO DynArr_find
 
 /**
  * Returns a newly allocated portion of memory that is double the current capacity.
@@ -76,8 +73,19 @@ void *DynArr_resizeNoCopy(DynArr *arr);
  */
 size_t DynArr_capacity(DynArr *arr);
 
+/**
+ * Overwrites the element at the given index to be the given element.
+ */
 void DynArr_set(DynArr *arr, size_t index, void *element);
 
-void DynArr_destroy(DynArr *arr, FreeFunc freeFunc);
+/**
+ * Frees all memory allocated to the DynArr as well as all data stored within.
+ * NOTE: freeFunc must be in form `void freeFunc(void *data)`
+ */
+void DynArr_destroy(void *arr, FreeFunc freeFunc);
+
+Iterator *DynArr_iter(DynArr *arr);
+
+// TODO DynArr_find
 
 #endif
