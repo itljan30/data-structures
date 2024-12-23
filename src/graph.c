@@ -2,8 +2,10 @@
 #include "hash_map.h"
 #include "dyn_arr.h"
 #include "linked_list.h"
+#include "iterator.h"
 
 #include <stdio.h>
+
 
 static int Edge_compare(void *edge1, void *edge2) {
     Edge *e1 = (Edge*)edge1;
@@ -172,12 +174,29 @@ void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue) {
     free(graph);
 }
 
-DynArr *Graph_getVertices(Graph *graph) {
+void *Graph_next(Iterator *iter) {
+    GraphNode *node = HashMap_next(iter);
+    return node->data;
+}
 
+Iterator *Graph_iter(Graph *graph) {
+    Iterator *iter = HashMap_iter(graph->nodes);
+    iter->next = Graph_next;
+    return iter;
+}
+
+DynArr *Graph_getVertices(Graph *graph) {
+    DynArr *vertices = DynArr_new();
+    Iterator *iter = Graph_iter(graph);
+    while (Iterator_hasNext(iter)) {
+        void *vertex = Iterator_next(iter);
+        DynArr_append(vertices, vertex);
+    }
+    return vertices;
 }
 
 DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey) {
-
+    
 }
 
 DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey) {

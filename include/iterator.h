@@ -11,6 +11,7 @@ typedef struct Iterator {
     void *currentNode;
     size_t length;
     size_t index;
+    size_t bucketIndex;
 
     void (*destroyFunc)(void *dataStruct, FreeFunc freeFunc);
     void *(*next)(struct Iterator *iter);
@@ -29,5 +30,8 @@ void Iterator_begin(Iterator *iter);
 void Iterator_end(Iterator *iter);
 
 bool Iterator_hasNext(Iterator *iter);
+
+// TODO
+// void Iterator_map(Iterator *iter);
 
 #endif

@@ -56,7 +56,7 @@ void DynArr_remove(DynArr *arr, const size_t index);
  * Returns true if the given dynamic array has the given element, else returns false.
  * NOTE: compareFunc must be in form `int compareFunc(void *element1, void *element2)`
  */
-int DynArr_contains(const DynArr *arr, void *element, CompareFunc compareFunc);
+int DynArr_contains(DynArr *arr, void *element, CompareFunc compareFunc);
 
 /**
  * Returns the length of the given dynamic array.
@@ -85,6 +85,8 @@ void DynArr_set(DynArr *arr, size_t index, void *element);
 void DynArr_destroy(void *arr, FreeFunc freeFunc);
 
 Iterator *DynArr_iter(DynArr *arr);
+
+int DynArr_index(DynArr *arr, void *element, CompareFunc compareFunc);
 
 // TODO DynArr_find
 

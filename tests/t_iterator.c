@@ -1,3 +1,4 @@
+#include "hash_map.h"
 #include "iterator.h"
 #include "dyn_arr.h"
 #include "linked_list.h"
@@ -19,6 +20,7 @@ void dynArr() {
         assert(*(int*)Iterator_next(iter) == i);
         i++;
     }
+    assert(i == 999);
 
     Iterator_destroy(iter, free);
 }
@@ -39,11 +41,37 @@ void linkedList() {
         assert(*(int*)Iterator_next(iter) == i);
         i++;
     }
+    assert(i == 999);
 
     Iterator_destroy(iter, free);
+}
+
+void hashMap() {
+    HashMap *map = HashMap_new(sizeof(char), compareChar);
+    for (int i = 0; i < 200; i++) {
+        char *c = malloc(sizeof(char));
+        *c = (char)i;
+        int *num = malloc(sizeof(int));
+        *num = i;
+        HashMap_set(map, c, num);
+    }
+
+    Iterator *iter = HashMap_iter(map);
+
+    int i = 0;
+    while (Iterator_hasNext(iter)) {
+        Iterator_next(iter);
+        i++;
+    }
+    
+    assert(i == 199);
+
+    Iterator_free(iter);
+    HashMap_destroy(map, free, free);
 }
 
 int main() {
     dynArr();
     linkedList();
+    hashMap();
 }

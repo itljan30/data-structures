@@ -3,6 +3,7 @@
 
 #include "dyn_arr.h"
 #include "callbacks.h"
+#include "iterator.h"
 
 typedef struct {
     void *key;
@@ -73,6 +74,10 @@ void HashMap_remove(HashMap *map, void *key);
  * NOTE: Does not free memory if freeKey or freeValue is NULL.
  */
 void HashMap_destroy(HashMap *map, FreeFunc freeKey, FreeFunc freeValue);
+
+Iterator *HashMap_iter(HashMap *map);
+
+void *HashMap_next(Iterator *iter);
 
 // TODO void HashMap_removeAndFree(HashMap *map, void *key, FreeFunc freeFunc);
 

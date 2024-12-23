@@ -2,15 +2,12 @@
 #include "dyn_arr.h"
 #include "linked_list.h"
 #include "callbacks.h"
+#include "iterator.h"
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-static int defaultCompare(void *string1, void *string2) {
-    return strcmp((char*)string1, (char*)string2);
-}
 
 // Uses murmur hash version 3.
 // https://en.wikipedia.org/wiki/MurmurHash for more information.
@@ -194,8 +191,7 @@ void *HashMap_find(HashMap *map, void *key) {
     while (currentNode != NULL) {
         if (currentNode != NULL) {
             KeyValue *pair = (KeyValue*)currentNode->data;
-            int comparison = map->keyCompare ? map->keyCompare(key, pair->key) 
-                                              : defaultCompare(key, pair->key);
+            int comparison = map->keyCompare(key, pair->key);
             if (comparison == 0) {
                 return pair->value;
             }
@@ -250,8 +246,7 @@ void HashMap_remove(HashMap *map, void *key) {
     while (currentNode != NULL) {
         if (currentNode != NULL) {
             KeyValue *pair = (KeyValue*)currentNode->data;
-            int comparison = map->keyCompare ? map->keyCompare(key, pair->key) 
-                                              : defaultCompare(key, pair->key);
+            int comparison = map->keyCompare(key, pair->key);
             if (comparison == 0) {
                 LinkedList_remove(list, i);
                 map->length--;
@@ -278,4 +273,41 @@ void HashMap_destroy(HashMap *map, FreeFunc freeKey, FreeFunc freeValue) {
     }
     DynArr_free(map->map);
     free(map);
+}
+
+void goToNextBucket(Iterator *iter) {
+    HashMap *map = iter->dataStruct;
+    LinkedList *list = DynArr_at(map->map, iter->bucketIndex);
+    while (list == NULL) {
+        iter->bucketIndex++;
+        list = DynArr_at(map->map, iter->bucketIndex);
+    }
+    iter->currentNode = list->firstNode;
+}
+
+void *HashMap_next(Iterator *iter) {
+    if (iter->currentNode == NULL) {
+        goToNextBucket(iter);
+    }
+    ListNode *node = iter->currentNode;
+    KeyValue *pair = node->data;
+    void *data = pair->value;
+    iter->currentNode = node->nextNode;
+    iter->index++;
+
+    return data;
+}
+
+Iterator *HashMap_iter(HashMap *map) {
+    Iterator *iter = malloc(sizeof(Iterator));
+    iter->dataStruct = map;
+    iter->bucketIndex = 0;
+    iter->index = 0;
+    iter->next = HashMap_next;
+    iter->length = map->length;
+    iter->currentNode = NULL;
+    // TODO alter HashMap_destroy to allow Iterator_destroy to be called
+    // iter->destroyFunc = HashMap_destroy;
+    
+    return iter;
 }

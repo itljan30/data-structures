@@ -93,6 +93,6 @@ void LinkedList_destroy(void *list, FreeFunc freeFunc);
 
 Iterator *LinkedList_iter(LinkedList *list);
 
-// TODO LinkedList_find
+int LinkedList_find(LinkedList *list, void *data, CompareFunc compareFunc);
 
 #endif

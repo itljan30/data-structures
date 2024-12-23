@@ -101,10 +101,11 @@ void DynArr_remove(DynArr *arr, const size_t index) {
     arr->length--;
 }
 
-int DynArr_contains(const DynArr *arr, void *element, CompareFunc compareFunc) {
+int DynArr_contains(DynArr *arr, void *element, CompareFunc compareFunc) {
     if (arr->length == 0) {
         return false;
     }
+
     for (int i = 0; i < arr->length; i++) {
         void *currentElement = *((void**)arr->elements + i);
         if (compareFunc(currentElement, element) == 0) {
@@ -166,6 +167,18 @@ Iterator *DynArr_iter(DynArr *arr) {
     iter->index = 0;
     iter->next = DynArr_next;
     iter->currentNode = NULL;
+    iter->bucketIndex = 0;
 
     return iter;
+}
+
+int DynArr_index(DynArr *arr, void *element, CompareFunc compareFunc) {
+    for (int i = 0; i < arr->length; i++) {
+        void *data = DynArr_at(arr, i);
+        if (compareFunc(data, element) == 0) {
+            return i;
+        }
+    }
+
+    return -1;
 }

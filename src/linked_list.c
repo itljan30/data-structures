@@ -193,6 +193,21 @@ Iterator *LinkedList_iter(LinkedList *list) {
     iter->index = 0;
     iter->currentNode = list->firstNode;
     iter->next = LinkedList_next;
+    iter->bucketIndex = 0;
 
     return iter;
+}
+
+int LinkedList_find(LinkedList *list, void *data, CompareFunc compareFunc) {
+    ListNode *curNode = list->firstNode;
+    int i = 0;
+    while (curNode != NULL) {
+        if (compareFunc(curNode->data, data) == 0) {
+            return i;
+        }
+        curNode = curNode->nextNode;
+        i++;
+    }
+
+    return -1;
 }
