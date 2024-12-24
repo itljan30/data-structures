@@ -182,3 +182,13 @@ int DynArr_index(DynArr *arr, void *element, CompareFunc compareFunc) {
 
     return -1;
 }
+
+DynArr *DynArr_clone(DynArr *arr) {
+    Iterator *iter = DynArr_iter(arr);
+    DynArr *newArr = DynArr_new();
+    while (Iterator_hasNext(iter)) {
+        DynArr_append(newArr, Iterator_next(iter));
+    }
+
+    return newArr;
+}

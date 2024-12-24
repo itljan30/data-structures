@@ -6,6 +6,51 @@
 
 #include <stdio.h>
 
+static GraphNode *Graph_findNode(Graph *graph, void *key) {
+    return (GraphNode*)HashMap_find(graph->nodes, key);
+}
+
+static DynArr *recursiveDFS(Graph *graph, DynArr *finalPath, DynArr *curPath, void *srcKey, 
+                            void *destKey, size_t depth, size_t maxDepth, bool exhaustive) {
+    if (DynArr_contains(curPath, srcKey, graph->keyCompare)) {
+        return NULL;
+    }
+
+    if (maxDepth != 0 && depth >= maxDepth) {
+        return NULL;
+    }
+
+    DynArr_append(curPath, srcKey);
+
+    if (srcKey == destKey) {
+        if (!exhaustive) {
+            return curPath;
+        }
+        DynArr_append(finalPath, curPath);
+        return NULL;
+    }
+
+    GraphNode *parent = Graph_findNode(graph, srcKey);
+    Iterator *neighbors = DynArr_iter(parent->edges);
+    while (Iterator_hasNext(neighbors)) {
+        Edge *neighbor = Iterator_next(neighbors);
+        DynArr *nextPath = DynArr_clone(curPath);
+        nextPath = recursiveDFS(graph, finalPath, nextPath, neighbor->dest, destKey, depth + 1, maxDepth, exhaustive);
+        if (!exhaustive && nextPath != NULL) {
+            return nextPath;
+        }
+        DynArr_free(nextPath);
+    }
+
+    DynArr_free(curPath);
+    if (!exhaustive) {
+        return NULL;
+    }
+    else {
+        return finalPath;
+    }
+}
+
 
 static int Edge_compare(void *edge1, void *edge2) {
     Edge *e1 = (Edge*)edge1;
@@ -195,10 +240,17 @@ DynArr *Graph_getVertices(Graph *graph) {
     return vertices;
 }
 
-DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey) {
-    
+DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth) {
+    return recursiveDFS(graph, DynArr_new(), DynArr_new(), srcKey, destKey, 0, maxDepth, false);
 }
 
-DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey) {
+DynArr *Graph_DFSAll(Graph *graph, void *srcKey, void *destKey, size_t maxDepth) {
+    DynArr *paths = recursiveDFS(graph, DynArr_new(), DynArr_new(), srcKey, destKey, 0, maxDepth, true);
+    if (DynArr_len(paths) == 0) {
+        return NULL;
+    }
+    return paths;
+}
 
+DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth) {
 }

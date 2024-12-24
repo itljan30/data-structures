@@ -49,9 +49,16 @@ int Graph_isConnected(Graph *graph, void *srcKey, void *destKey);
 
 void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue);
 
-DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey);
+DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth);
 
-DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey);
+DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth);
+
+/**
+ * Exhaustively searches the graph to find all paths from one vertex to another.
+ * Returns a DynArr of DynArr where each inner DynArr contains the keys to each vertex that was crossed on the path.
+ * @param maxDepth Limits how deep it searches the graph. If `0`, it searches without limit.
+ */
+DynArr *Graph_DFSAll(Graph *graph, void *srcKey, void *destKey, size_t maxDepth);
 
 DynArr *Graph_getVertices(Graph *graph);
 

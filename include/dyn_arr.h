@@ -88,6 +88,8 @@ Iterator *DynArr_iter(DynArr *arr);
 
 int DynArr_index(DynArr *arr, void *element, CompareFunc compareFunc);
 
+DynArr *DynArr_clone(DynArr *arr);
+
 // TODO DynArr_find
 
 #endif
