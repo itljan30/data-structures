@@ -56,7 +56,7 @@ void hashMap() {
         HashMap_set(map, c, num);
     }
 
-    Iterator *iter = HashMap_iter(map);
+    Iterator *iter = HashMap_iterData(map);
 
     int i = 0;
     while (Iterator_hasNext(iter)) {

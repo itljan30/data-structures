@@ -4,7 +4,35 @@
 #include "linked_list.h"
 #include "iterator.h"
 
+#include <float.h>
 #include <stdio.h>
+#include <limits.h>
+
+static DynArr *parsePath(Graph *graph, DynArr *vertices, DynArr *previous, void *destKey) {
+    DynArr *path = DynArr_new();
+    DynArr_append(path, destKey);
+
+    int index = DynArr_index(vertices, destKey, graph->keyCompare);
+    while (DynArr_at(previous, index) != NULL) {
+        void *curKey = DynArr_at(previous, index);
+        DynArr_append(path, curKey);
+        index = DynArr_index(vertices, curKey, graph->keyCompare);
+    }
+    
+    if (DynArr_len(path) == 1) {
+        DynArr_free(path);
+        return NULL;
+    }
+
+    DynArr *reversedPath = DynArr_new();
+
+    for (int i = DynArr_len(path) - 1; i >= 0; i--) {
+        DynArr_append(reversedPath, DynArr_at(path, i));
+    }
+    DynArr_free(path);
+
+    return reversedPath;
+}
 
 static GraphNode *Graph_findNode(Graph *graph, void *key) {
     return (GraphNode*)HashMap_find(graph->nodes, key);
@@ -113,12 +141,11 @@ void Graph_remove(Graph *graph, void *key) {
 }
 
 void Graph_connect(Graph *graph, void *srcKey, void *destKey, float weight) {
-    GraphNode *destNode = (GraphNode*)HashMap_find(graph->nodes, destKey);
-    if (destNode == NULL) {
+    if (HashMap_find(graph->nodes, destKey) == NULL) {
         printf("ERROR: Attempted to connect to data that doesn't exist\n");
         exit(EXIT_FAILURE);
     }
-    Edge *edge = Edge_new(destNode, weight);
+    Edge *edge = Edge_new(destKey, weight);
     
     GraphNode *srcNode = (GraphNode*)HashMap_find(graph->nodes, srcKey);
     if (srcNode == NULL) {
@@ -133,8 +160,7 @@ void Graph_connect(Graph *graph, void *srcKey, void *destKey, float weight) {
 }
 
 void Graph_disconnect(Graph *graph, void *srcKey, void *destKey) {
-    GraphNode *destNode = (GraphNode*)HashMap_find(graph->nodes, destKey);
-    if (destNode == NULL) {
+    if (HashMap_find(graph->nodes, destKey) == NULL) {
         printf("ERROR: Attempted to connect to data that doesn't exist\n");
         exit(EXIT_FAILURE);
     }
@@ -147,7 +173,7 @@ void Graph_disconnect(Graph *graph, void *srcKey, void *destKey) {
     int index = -1;
     for (int i = 0; i < DynArr_len(srcNode->edges); i++) {
         Edge *currentEdge = (Edge*)DynArr_at(srcNode->edges, i);
-        if (currentEdge->dest == destNode) {
+        if (currentEdge->dest == destKey) {
             index = i;
             Edge_free(currentEdge);
             break;
@@ -172,15 +198,14 @@ int Graph_isConnected(Graph *graph, void *srcKey, void *destKey) {
         printf("ERROR: Source key does not exist in graph\n");
         exit(EXIT_FAILURE);
     }
-    GraphNode *destNode = HashMap_find(graph->nodes, destKey);
-    if (destNode == NULL) {
+    if (HashMap_find(graph->nodes, destKey) == NULL) {
         printf("ERROR: Destination key does not exist in graph\n");
         exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < DynArr_len(srcNode->edges); i++) {
         Edge *currentEdge = DynArr_at(srcNode->edges, i);
-        if (currentEdge->dest == destNode) {
+        if (currentEdge->dest == destKey) {
             return true;
         }
     }
@@ -219,25 +244,25 @@ void Graph_destroy(Graph *graph, FreeFunc freeKey, FreeFunc freeValue) {
     free(graph);
 }
 
-void *Graph_next(Iterator *iter) {
-    GraphNode *node = HashMap_next(iter);
+void *Graph_nextData(Iterator *iter) {
+    GraphNode *node = HashMap_nextData(iter);
     return node->data;
 }
 
-Iterator *Graph_iter(Graph *graph) {
-    Iterator *iter = HashMap_iter(graph->nodes);
-    iter->next = Graph_next;
+Iterator *Graph_iterData(Graph *graph) {
+    Iterator *iter = HashMap_iterData(graph->nodes);
+    iter->next = Graph_nextData;
     return iter;
 }
 
-DynArr *Graph_getVertices(Graph *graph) {
-    DynArr *vertices = DynArr_new();
-    Iterator *iter = Graph_iter(graph);
-    while (Iterator_hasNext(iter)) {
-        void *vertex = Iterator_next(iter);
-        DynArr_append(vertices, vertex);
-    }
-    return vertices;
+void *Graph_nextKey(Iterator *iter) {
+    return HashMap_nextKey(iter);
+}
+
+Iterator *Graph_iterKey(Graph *graph) {
+    Iterator *iter = HashMap_iterKey(graph->nodes);
+    iter->next = Graph_nextKey;
+    return iter;
 }
 
 DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth) {
@@ -253,4 +278,96 @@ DynArr *Graph_DFSAll(Graph *graph, void *srcKey, void *destKey, size_t maxDepth)
 }
 
 DynArr *Graph_BFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth) {
+    DynArr *vertices = DynArr_new();
+    DynArr *distance = DynArr_new();
+    DynArr *previous = DynArr_new();
+    DynArr *queue = DynArr_new();
+
+    Iterator *graphIter = Graph_iterKey(graph);
+
+    while (Iterator_hasNext(graphIter)) {
+        void *key = Iterator_next(graphIter);
+
+        DynArr_append(vertices, key);
+
+        if (graph->keyCompare(key, srcKey) == 0) {
+            float *zero = malloc(sizeof(float));
+            *zero = 0;
+            DynArr_append(distance, zero);
+            DynArr_append(queue, key);
+        }
+        else {
+            float *inf = malloc(sizeof(float));
+            *inf = FLT_MAX;
+            DynArr_append(distance, inf);
+        }
+
+        DynArr_append(previous, NULL);
+    }
+    Iterator_free(graphIter);
+
+    while (DynArr_len(queue) != 0) {
+        void *closestVertexKey = NULL;
+        float closestDistance = FLT_MAX;
+        
+        for (int i = 0; i < DynArr_len(queue); i++) {
+            void *currentVertex = DynArr_at(queue, i);
+
+            int index = DynArr_index(vertices, currentVertex, graph->keyCompare);
+            float curDistance = *(float*)DynArr_at(distance, index);
+            if (curDistance < closestDistance) {
+                closestDistance = curDistance;
+                closestVertexKey = currentVertex;
+            }
+        }
+
+        int removalIndex = DynArr_index(queue, closestVertexKey, graph->keyCompare);
+        DynArr_remove(queue, removalIndex);
+
+        if (maxDepth != 0 && closestDistance >= (float)maxDepth) {
+            // do some freeing then return NULL
+            break;
+        }
+
+        if (graph->keyCompare(closestVertexKey, destKey) == 0) {
+            break;
+        }
+
+        int vertIndex = DynArr_index(vertices, closestVertexKey, graph->keyCompare);
+        float curDist = *(float*)DynArr_at(distance, vertIndex);
+
+        GraphNode *curNode = HashMap_find(graph->nodes, closestVertexKey);
+        Iterator *neighbors = DynArr_iter(curNode->edges);
+
+        while (Iterator_hasNext(neighbors)) {
+            Edge *edge = Iterator_next(neighbors);
+            float weight = edge->weight;
+            void *neighborKey = edge->dest;
+
+            float alt = curDist + weight;
+
+            int index = DynArr_index(vertices, neighborKey, graph->keyCompare);
+            if (alt < *(float*)DynArr_at(distance, index)) {
+                if (!DynArr_contains(queue, neighborKey, graph->keyCompare)) {
+                    DynArr_append(queue, neighborKey);
+                }
+
+                free(DynArr_at(distance, index));
+                float *num = malloc(sizeof(float));
+                *num = alt;
+                DynArr_set(distance, index, num);
+
+                DynArr_set(previous, index, closestVertexKey);
+            }
+        }
+    }
+
+    DynArr *path = parsePath(graph, vertices, previous, destKey);
+
+    DynArr_free(queue);
+    DynArr_free(vertices);
+    DynArr_free(previous);
+    DynArr_destroy(distance, free);
+
+    return path;
 }

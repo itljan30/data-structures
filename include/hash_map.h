@@ -75,9 +75,13 @@ void HashMap_remove(HashMap *map, void *key);
  */
 void HashMap_destroy(HashMap *map, FreeFunc freeKey, FreeFunc freeValue);
 
-Iterator *HashMap_iter(HashMap *map);
+Iterator *HashMap_iterData(HashMap *map);
 
-void *HashMap_next(Iterator *iter);
+Iterator *HashMap_iterKey(HashMap *map);
+
+void *HashMap_nextData(Iterator *iter);
+
+void *HashMap_nextKey(Iterator *iter);
 
 // TODO void HashMap_removeAndFree(HashMap *map, void *key, FreeFunc freeFunc);
 

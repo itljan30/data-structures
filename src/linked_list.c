@@ -8,6 +8,10 @@
 #include <callbacks.h>
 
 static void *LinkedList_next(Iterator *iter) {
+    if (iter->currentNode == NULL) {
+        LinkedList *list = iter->dataStruct;
+        iter->currentNode = list->firstNode;
+    }
     ListNode *curNode = (ListNode*)iter->currentNode;
     void *data = curNode->data;
     iter->currentNode = curNode->nextNode;

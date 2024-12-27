@@ -17,7 +17,7 @@ void GraphNode_free(GraphNode *node);
 void GraphNode_destroy(GraphNode *node, FreeFunc freeFunc);
 
 typedef struct {
-    GraphNode *dest;
+    void *dest; // the key to the GraphNode
     float weight;
 } Edge;
 
@@ -59,7 +59,5 @@ DynArr *Graph_DFS(Graph *graph, void *srcKey, void *destKey, size_t maxDepth);
  * @param maxDepth Limits how deep it searches the graph. If `0`, it searches without limit.
  */
 DynArr *Graph_DFSAll(Graph *graph, void *srcKey, void *destKey, size_t maxDepth);
-
-DynArr *Graph_getVertices(Graph *graph);
 
 #endif

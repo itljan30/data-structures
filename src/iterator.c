@@ -12,7 +12,9 @@ void Iterator_destroy(Iterator *iter, FreeFunc freeFunc) {
 }
 
 void Iterator_begin(Iterator *iter) {
+    iter->bucketIndex = 0;
     iter->index = 0;
+    iter->currentNode = NULL;
 }
 
 void Iterator_end(Iterator *iter) {

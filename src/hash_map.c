@@ -285,7 +285,7 @@ void goToNextBucket(Iterator *iter) {
     iter->currentNode = list->firstNode;
 }
 
-void *HashMap_next(Iterator *iter) {
+void *HashMap_nextData(Iterator *iter) {
     if (iter->currentNode == NULL) {
         goToNextBucket(iter);
     }
@@ -298,12 +298,39 @@ void *HashMap_next(Iterator *iter) {
     return data;
 }
 
-Iterator *HashMap_iter(HashMap *map) {
+void *HashMap_nextKey(Iterator *iter) {
+    if (iter->currentNode == NULL) {
+        goToNextBucket(iter);
+    }
+    ListNode *node = iter->currentNode;
+    KeyValue *pair = node->data;
+    void *key = pair->key;
+    iter->currentNode = node->nextNode;
+    iter->index++;
+
+    return key;
+}
+
+Iterator *HashMap_iterKey(HashMap *map) {
     Iterator *iter = malloc(sizeof(Iterator));
     iter->dataStruct = map;
     iter->bucketIndex = 0;
     iter->index = 0;
-    iter->next = HashMap_next;
+    iter->next = HashMap_nextKey;
+    iter->length = map->length;
+    iter->currentNode = NULL;
+    // TODO alter HashMap_destroy to allow Iterator_destroy to be called
+    // iter->destroyFunc = HashMap_destroy;
+    
+    return iter;
+}
+
+Iterator *HashMap_iterData(HashMap *map) {
+    Iterator *iter = malloc(sizeof(Iterator));
+    iter->dataStruct = map;
+    iter->bucketIndex = 0;
+    iter->index = 0;
+    iter->next = HashMap_nextData;
     iter->length = map->length;
     iter->currentNode = NULL;
     // TODO alter HashMap_destroy to allow Iterator_destroy to be called
