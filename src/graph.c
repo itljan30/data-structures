@@ -6,7 +6,6 @@
 
 #include <float.h>
 #include <stdio.h>
-#include <limits.h>
 
 static DynArr *parsePath(Graph *graph, DynArr *vertices, DynArr *previous, void *destKey) {
     DynArr *path = DynArr_new();

@@ -1,8 +1,6 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 
-#include "callbacks.h"
-
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -13,15 +11,12 @@ typedef struct Iterator {
     size_t index;
     size_t bucketIndex;
 
-    void (*destroyFunc)(void *dataStruct, FreeFunc freeFunc);
     void *(*next)(struct Iterator *iter);
 } Iterator;
 
 void Iterator_free(Iterator *iter);
 
 void *Iterator_next(Iterator *iter);
-
-void Iterator_destroy(Iterator *iter, FreeFunc freeFunc);
 
 int Iterator_len(Iterator *iter);
 

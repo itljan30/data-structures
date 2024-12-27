@@ -146,9 +146,7 @@ void DynArr_set(DynArr *arr, size_t index, void *element) {
     *((void**)arr->elements + index) = element;
 }
 
-void DynArr_destroy(void *data, FreeFunc freeFunc) {
-    DynArr *arr = (DynArr*)data;
-
+void DynArr_destroy(DynArr *arr, FreeFunc freeFunc) {
     if (freeFunc != NULL) {
         for (int i = 0; i < arr->length; i++) {
             freeFunc(DynArr_at(arr, i));
@@ -162,7 +160,6 @@ void DynArr_destroy(void *data, FreeFunc freeFunc) {
 Iterator *DynArr_iter(DynArr *arr) {
     Iterator *iter = malloc(sizeof(Iterator));
     iter->dataStruct = arr;
-    iter->destroyFunc = DynArr_destroy;
     iter->length = arr->length;
     iter->index = 0;
     iter->next = DynArr_next;

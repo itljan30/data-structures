@@ -319,8 +319,6 @@ Iterator *HashMap_iterKey(HashMap *map) {
     iter->next = HashMap_nextKey;
     iter->length = map->length;
     iter->currentNode = NULL;
-    // TODO alter HashMap_destroy to allow Iterator_destroy to be called
-    // iter->destroyFunc = HashMap_destroy;
     
     return iter;
 }
@@ -333,8 +331,6 @@ Iterator *HashMap_iterData(HashMap *map) {
     iter->next = HashMap_nextData;
     iter->length = map->length;
     iter->currentNode = NULL;
-    // TODO alter HashMap_destroy to allow Iterator_destroy to be called
-    // iter->destroyFunc = HashMap_destroy;
     
     return iter;
 }

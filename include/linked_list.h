@@ -89,7 +89,7 @@ int LinkedList_contains(LinkedList *list, void *element, CompareFunc compareFunc
  * Frees the memory allocated to the LinkedList as well as all data stored within.
  * NOTE: freeFunc must be in form `void freeFunc(void *element)`
  */
-void LinkedList_destroy(void *list, FreeFunc freeFunc);
+void LinkedList_destroy(LinkedList *list, FreeFunc freeFunc);
 
 Iterator *LinkedList_iter(LinkedList *list);
 

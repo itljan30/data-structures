@@ -82,7 +82,7 @@ void DynArr_set(DynArr *arr, size_t index, void *element);
  * Frees all memory allocated to the DynArr as well as all data stored within.
  * NOTE: freeFunc must be in form `void freeFunc(void *data)`
  */
-void DynArr_destroy(void *arr, FreeFunc freeFunc);
+void DynArr_destroy(DynArr *arr, FreeFunc freeFunc);
 
 Iterator *DynArr_iter(DynArr *arr);
 

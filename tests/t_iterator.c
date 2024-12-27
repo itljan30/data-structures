@@ -22,7 +22,8 @@ void dynArr() {
     }
     assert(i == 999);
 
-    Iterator_destroy(iter, free);
+    Iterator_free(iter);
+    DynArr_destroy(arr, free);
 }
 
 void linkedList() {
@@ -43,7 +44,8 @@ void linkedList() {
     }
     assert(i == 999);
 
-    Iterator_destroy(iter, free);
+    Iterator_free(iter);
+    LinkedList_destroy(list, free);
 }
 
 void hashMap() {

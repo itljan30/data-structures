@@ -6,11 +6,6 @@ void Iterator_free(Iterator *iter) {
     free(iter);
 }
 
-void Iterator_destroy(Iterator *iter, FreeFunc freeFunc) {
-    iter->destroyFunc(iter->dataStruct, freeFunc);
-    free(iter);
-}
-
 void Iterator_begin(Iterator *iter) {
     iter->bucketIndex = 0;
     iter->index = 0;
